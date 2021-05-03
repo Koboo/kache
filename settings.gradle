@@ -1,0 +1,5 @@
+rootProject.name = "${publicName}"
+include 'sync-core'
+include 'sync-client'
+include 'sync-server'
+

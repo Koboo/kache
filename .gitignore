@@ -1,0 +1,10 @@
+/.gradle/
+/.idea/
+/build/
+/out/
+/sync-client/build/
+/sync-client/out/
+/sync-core/build/
+/sync-core/out/
+/sync-server/build/
+/sync-server/out/

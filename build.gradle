@@ -1,0 +1,33 @@
+allprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+
+    group "${publicGroup}"
+    version "${publicVersion}"
+
+    publishing {
+        repositories {
+            maven {
+                url = "https://repo.koboo.eu/releases"
+                credentials {
+                    username = System.getenv('REPO_USER')
+                    password = System.getenv('REPO_TOKEN')
+                }
+            }
+        }
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://repo.koboo.eu/releases'
+        }
+    }
+}
+
