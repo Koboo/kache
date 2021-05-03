@@ -1,6 +1,5 @@
 package eu.koboo.netsync.operation;
 
-import eu.koboo.endpoint.core.Endpoint;
 import eu.koboo.endpoint.core.protocols.natives.NativePacket;
 import eu.koboo.netsync.NetSync;
 import eu.koboo.nettyutils.BufUtils;

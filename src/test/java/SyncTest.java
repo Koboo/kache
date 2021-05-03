@@ -1,8 +1,3 @@
-import eu.koboo.endpoint.core.protocols.ReceiveEvent;
-import eu.koboo.endpoint.core.protocols.natives.NativeReceiveEvent;
-import eu.koboo.endpoint.core.protocols.serializable.SerializableReceiveEvent;
-import eu.koboo.event.CallableEvent;
-import eu.koboo.event.listener.EventListener;
 import eu.koboo.netsync.NetSyncClient;
 import eu.koboo.netsync.NetSyncServer;
 import eu.koboo.netsync.operation.SyncModel;
