@@ -8,3 +8,5 @@
 /sync-core/out/
 /sync-server/build/
 /sync-server/out/
+/port.cfg
+/gradle/
