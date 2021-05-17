@@ -1,26 +1,17 @@
 package eu.koboo.kache.packets.client;
 
-import eu.koboo.endpoint.core.protocols.natives.NativePacket;
+import eu.koboo.kache.packets.CachePacket;
 import eu.koboo.nettyutils.BufUtils;
 import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClientPushManyPacket implements NativePacket {
+public class ClientPushManyPacket extends CachePacket {
 
-    private String cacheName;
     private Map<String, byte[]> mapToCache;
 
     public ClientPushManyPacket() {
-    }
-
-    public String getCacheName() {
-        return cacheName;
-    }
-
-    public void setCacheName(String cacheName) {
-        this.cacheName = cacheName;
     }
 
     public Map<String, byte[]> getMapToCache() {
@@ -34,7 +25,6 @@ public class ClientPushManyPacket implements NativePacket {
     @Override
     public void read(ByteBuf byteBuf) {
         cacheName = BufUtils.readString(byteBuf);
-
         int size = BufUtils.readVarInt(byteBuf);
         mapToCache = new HashMap<>();
         for(int i = 0; i < size; i++) {

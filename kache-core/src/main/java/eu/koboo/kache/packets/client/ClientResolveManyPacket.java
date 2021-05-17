@@ -1,16 +1,15 @@
 package eu.koboo.kache.packets.client;
 
-import eu.koboo.endpoint.core.protocols.natives.NativePacket;
+import eu.koboo.kache.packets.CachePacket;
 import eu.koboo.nettyutils.BufUtils;
 import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientResolveManyPacket implements NativePacket {
+public class ClientResolveManyPacket extends CachePacket {
 
     private String futureId;
-    private String cacheName;
     private List<String> listToResolve;
 
     public ClientResolveManyPacket() {
@@ -22,14 +21,6 @@ public class ClientResolveManyPacket implements NativePacket {
 
     public void setFutureId(String futureId) {
         this.futureId = futureId;
-    }
-
-    public String getCacheName() {
-        return cacheName;
-    }
-
-    public void setCacheName(String cacheName) {
-        this.cacheName = cacheName;
     }
 
     public List<String> getListToResolve() {

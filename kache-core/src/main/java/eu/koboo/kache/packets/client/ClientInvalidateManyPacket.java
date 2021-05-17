@@ -1,26 +1,17 @@
 package eu.koboo.kache.packets.client;
 
-import eu.koboo.endpoint.core.protocols.natives.NativePacket;
+import eu.koboo.kache.packets.CachePacket;
 import eu.koboo.nettyutils.BufUtils;
 import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientInvalidateManyPacket implements NativePacket {
+public class ClientInvalidateManyPacket extends CachePacket {
 
-    private String cacheName;
     private List<String> listToInvalidate;
 
     public ClientInvalidateManyPacket() {
-    }
-
-    public String getCacheName() {
-        return cacheName;
-    }
-
-    public void setCacheName(String cacheName) {
-        this.cacheName = cacheName;
     }
 
     public List<String> getListToInvalidate() {
