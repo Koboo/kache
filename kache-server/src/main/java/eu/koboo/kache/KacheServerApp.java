@@ -1,5 +1,7 @@
 package eu.koboo.kache;
 
+import eu.koboo.kache.listener.KacheActionListener;
+import eu.koboo.kache.listener.KacheRequestListener;
 import eu.koboo.terminal.TerminalConsole;
 import eu.koboo.terminal.ConsoleBuilder;
 
@@ -14,6 +16,8 @@ public class KacheServerApp {
                 .setConsoleName("kache-server")
                 .build();
         this.kacheServer = new KacheServer();
+        this.kacheServer.eventHandler().register(new KacheActionListener(this));
+        this.kacheServer.eventHandler().register(new KacheRequestListener(this));
     }
 
     void start() {
@@ -25,6 +29,10 @@ public class KacheServerApp {
     void stop() {
         if (kacheServer != null)
             kacheServer.stop();
+    }
+
+    public TerminalConsole getConsole() {
+        return console;
     }
 
     public static void main(String[] args) {
