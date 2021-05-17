@@ -32,6 +32,4 @@ public class KacheClient extends EndpointClient {
         return localCache;
     }
 
-
-
 }
