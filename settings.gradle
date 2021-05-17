@@ -1,5 +1,5 @@
 rootProject.name = "${publicName}"
-include 'sync-core'
-include 'sync-client'
-include 'sync-server'
+include 'kache-core'
+include 'kache-client'
+include 'kache-server'
 

@@ -1,4 +1,0 @@
-dependencies {
-    compile "eu.koboo:netty-client:${endpointVersion}"
-    compile project(':sync-core')
-}

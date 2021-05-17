@@ -34,6 +34,6 @@ allprojects {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.13.1'
 
-    testCompile project('sync-server')
-    testCompile project('sync-client')
+    testCompile project('kache-server')
+    testCompile project('kache-client')
 }

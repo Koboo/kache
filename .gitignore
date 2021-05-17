@@ -4,9 +4,9 @@
 /out/
 /sync-client/build/
 /sync-client/out/
-/sync-core/build/
-/sync-core/out/
-/sync-server/build/
-/sync-server/out/
+/kache-core/build/
+/kache-core/out/
+/kache-server/build/
+/kache-server/out/
 /port.cfg
 /gradle/
