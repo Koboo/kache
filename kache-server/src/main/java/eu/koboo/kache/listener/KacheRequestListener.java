@@ -13,7 +13,10 @@ public class KacheRequestListener extends EventListener<KacheRequestEvent> {
     }
 
     @Override
-    public void onEvent(KacheRequestEvent kacheRequestEvent) {
-        serverApp.getConsole().info("Packet{channel=" + kacheRequestEvent.getChannelId() + ", type=" + kacheRequestEvent.getPacketClass().getSimpleName().replaceFirst("Client", "").replaceFirst("Packet", "") + ", processTime=" + ((double) kacheRequestEvent.getProcessTime() / 1000) + "ms}");
+    public void onEvent(KacheRequestEvent event) {
+        serverApp.getConsole().info("Packet{channel=" + event.getChannelId() + ", " +
+                "type=" + event.getPacketClass().getSimpleName().replaceFirst("Client", "").replaceFirst("Packet", "") + ", " +
+                "cache=" + event.getCacheName() + ", " +
+                "processTime=" + ((double) event.getProcessTime() / 1000000) + "ms}");
     }
 }
