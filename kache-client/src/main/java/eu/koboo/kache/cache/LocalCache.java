@@ -8,22 +8,28 @@ public interface LocalCache<V extends Serializable> {
 
     Map<String, Boolean> existsMany(List<String> id);
 
-    void publishMany(Map<String, V> mapToCache);
+    boolean exists(String id);
+
+    void pushMany(Map<String, V> mapToCache);
+
+    void push(String id, V value);
 
     void invalidateMany(List<String> listToInvalidate);
+
+    void invalidate(String id);
 
     void invalidateAll();
 
     Map<String, V> resolveMany(List<String> listToResolve);
 
+    V resolve(String id);
+
     Map<String, V> resolveAll();
 
-    boolean exists(String id);
+    void forceMany(Map<String, Boolean> id);
 
-    void push(String id, V value);
+    void force(String id, boolean force);
 
-    void invalidate(String id);
-
-    V resolve(String id);
+    void cacheTime(long cacheTime);
 
 }

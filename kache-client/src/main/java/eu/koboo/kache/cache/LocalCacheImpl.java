@@ -31,7 +31,7 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
             packet.setCacheName(cacheName);
             packet.setListToContains(listToExists);
             client.send(packet, false);
-            return futureEntry.getValue().get(5, TimeUnit.SECONDS);
+            return futureEntry.getValue().get(listToExists.size() * 100L, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             client.onException(getClass(), e);
         }
@@ -39,7 +39,15 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
     }
 
     @Override
-    public void publishMany(Map<String, V> mapToCache) {
+    public boolean exists(String id) {
+        List<String> listToExists = new ArrayList<>();
+        listToExists.add(id);
+        Map<String, Boolean> existsMap = existsMany(listToExists);
+        return existsMap != null && !existsMap.isEmpty() && existsMap.containsKey(id) && existsMap.get(id);
+    }
+
+    @Override
+    public void pushMany(Map<String, V> mapToCache) {
         if (mapToCache == null || mapToCache.isEmpty())
             return;
         Map<String, byte[]> cacheMap = new HashMap<>();
@@ -54,6 +62,13 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
     }
 
     @Override
+    public void push(String id, V value) {
+        Map<String, V> mapToCache = new HashMap<>();
+        mapToCache.put(id, value);
+        pushMany(mapToCache);
+    }
+
+    @Override
     public void invalidateMany(List<String> listToInvalidate) {
         if (listToInvalidate == null || listToInvalidate.isEmpty())
             return;
@@ -61,6 +76,13 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
         packet.setCacheName(cacheName);
         packet.setListToInvalidate(listToInvalidate);
         client.send(packet, false);
+    }
+
+    @Override
+    public void invalidate(String id) {
+        List<String> listToInvalidate = new ArrayList<>();
+        listToInvalidate.add(id);
+        invalidateMany(listToInvalidate);
     }
 
     @Override
@@ -82,7 +104,7 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
             packet.setCacheName(cacheName);
             packet.setListToResolve(listToResolve);
             client.send(packet, false);
-            Map<String, byte[]> resolvedMap = futureEntry.getValue().get(5, TimeUnit.SECONDS);
+            Map<String, byte[]> resolvedMap = futureEntry.getValue().get(listToResolve.size() * 100L, TimeUnit.MILLISECONDS);
             if (resolvedMap == null || resolvedMap.isEmpty())
                 return new HashMap<>();
             Map<String, V> serializedMap = new HashMap<>();
@@ -95,50 +117,6 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
             client.onException(getClass(), e);
         }
         return new HashMap<>();
-    }
-
-    @Override
-    public Map<String, V> resolveAll() {
-        try {
-            Map.Entry<String, CompletableFuture<Map<String, byte[]>>> futureEntry = SharedFutures.generateFuture();
-            ClientResolveAllPacket packet = new ClientResolveAllPacket();
-            packet.setFutureId(futureEntry.getKey());
-            packet.setCacheName(cacheName);
-            Map<String, byte[]> resolvedMap = futureEntry.getValue().get(5, TimeUnit.SECONDS);
-            if (resolvedMap == null || resolvedMap.isEmpty())
-                return new HashMap<>();
-            Map<String, V> serializedMap = new HashMap<>();
-            for (Map.Entry<String, byte[]> entry : resolvedMap.entrySet()) {
-                V value = (V) Kache.ENDPOINT_BUILDER.getSerializerPool().deserialize(entry.getValue());
-                serializedMap.put(entry.getKey(), value);
-            }
-            return serializedMap;
-        } catch (Exception e) {
-            client.onException(getClass(), e);
-        }
-        return new HashMap<>();
-    }
-
-    @Override
-    public boolean exists(String id) {
-        List<String> listToExists = new ArrayList<>();
-        listToExists.add(id);
-        Map<String, Boolean> existsMap = existsMany(listToExists);
-        return existsMap != null && !existsMap.isEmpty() && existsMap.containsKey(id) && existsMap.get(id);
-    }
-
-    @Override
-    public void push(String id, V value) {
-        Map<String, V> mapToCache = new HashMap<>();
-        mapToCache.put(id, value);
-        publishMany(mapToCache);
-    }
-
-    @Override
-    public void invalidate(String id) {
-        List<String> listToInvalidate = new ArrayList<>();
-        listToInvalidate.add(id);
-        invalidateMany(listToInvalidate);
     }
 
     @Override
@@ -148,5 +126,53 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
         Map<String, V> resolveMap = resolveMany(listToResolve);
 
         return resolveMap != null && !resolveMap.isEmpty() && resolveMap.containsKey(id) ? resolveMap.get(id) : null;
+    }
+
+    @Override
+    public Map<String, V> resolveAll() {
+        try {
+            Map.Entry<String, CompletableFuture<Map<String, byte[]>>> futureEntry = SharedFutures.generateFuture();
+            ClientResolveAllPacket packet = new ClientResolveAllPacket();
+            packet.setFutureId(futureEntry.getKey());
+            packet.setCacheName(cacheName);
+            client.send(packet, false);
+            Map<String, byte[]> resolvedMap = futureEntry.getValue().get();
+            if (resolvedMap == null || resolvedMap.isEmpty())
+                return new HashMap<>();
+            Map<String, V> serializedMap = new HashMap<>();
+            for (Map.Entry<String, byte[]> entry : resolvedMap.entrySet()) {
+                V value = (V) Kache.ENDPOINT_BUILDER.getSerializerPool().deserialize(entry.getValue());
+                serializedMap.put(entry.getKey(), value);
+            }
+            return serializedMap;
+        } catch (Exception e) {
+            client.onException(getClass(), e);
+        }
+        return new HashMap<>();
+    }
+
+    @Override
+    public void forceMany(Map<String, Boolean> mapToForce) {
+        if (mapToForce == null || mapToForce.isEmpty())
+            return;
+        ClientForceManyPacket packet = new ClientForceManyPacket();
+        packet.setCacheName(cacheName);
+        packet.setForceMap(mapToForce);
+        client.send(packet, false);
+    }
+
+    @Override
+    public void force(String id, boolean force) {
+        Map<String, Boolean> forceMap = new HashMap<>();
+        forceMap.put(id, force);
+        forceMany(forceMap);
+    }
+
+    @Override
+    public void cacheTime(long cacheTime) {
+        ClientCacheTimePacket packet = new ClientCacheTimePacket();
+        packet.setCacheName(cacheName);
+        packet.setCacheTimeMillis(cacheTime);
+        client.send(packet, false);
     }
 }
