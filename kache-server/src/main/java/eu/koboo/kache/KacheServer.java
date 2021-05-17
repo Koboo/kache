@@ -1,6 +1,7 @@
 package eu.koboo.kache;
 
 import eu.koboo.endpoint.server.EndpointServer;
+import eu.koboo.kache.listener.KacheServerListener;
 import eu.koboo.kache.map.CacheMap;
 
 import java.util.*;
@@ -17,7 +18,7 @@ public class KacheServer extends EndpointServer {
 
     public KacheServer(int port) {
         super(Kache.ENDPOINT_BUILDER, port);
-        eventHandler().register(new CacheServerListener(this));
+        eventHandler().register(new KacheServerListener(this));
     }
 
     public List<String> getAllKeys(String name) {
@@ -26,7 +27,7 @@ public class KacheServer extends EndpointServer {
         return cacheMap != null && !cacheMap.isEmpty() ? new ArrayList<>(cacheMap.keySet()) : new ArrayList<>();
     }
 
-    public void cache(String name, Map<String, byte[]> mapToCache) {
+    public void push(String name, Map<String, byte[]> mapToCache) {
         name = name.toLowerCase(Locale.ROOT);
         CacheMap<String, byte[]> cacheMap = serverCache.get(name);
         if (cacheMap == null)
@@ -78,4 +79,25 @@ public class KacheServer extends EndpointServer {
         }
         return resolveMap;
     }
+
+    public void force(String name, Map<String, Boolean> listToForce) {
+        name = name.toLowerCase(Locale.ROOT);
+        CacheMap<String, byte[]> cacheMap = serverCache.get(name);
+        if(cacheMap != null) {
+            for(String key : listToForce.keySet()) {
+                if(cacheMap.containsKey(key)) {
+                    cacheMap.setForced(key, listToForce.get(key));
+                }
+            }
+        }
+    }
+
+    public void cacheTime(String name, long cacheTime) {
+        name = name.toLowerCase(Locale.ROOT);
+        CacheMap<String, byte[]> cacheMap = serverCache.get(name);
+        if(cacheMap != null) {
+            cacheMap.setLifeTime(cacheTime);
+        }
+    }
+
 }
