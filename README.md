@@ -45,7 +45,7 @@ public class SomeClass {
         LocalCache<Object> cache = client.getCache("object_cache");
 
         // Put into cache
-        cache.cache(key, object);
+        cache.push(key, object);
 
         // Check if key exists in cache 
         boolean exists = cache.exists(key);
@@ -61,7 +61,7 @@ public class SomeClass {
         Map<String, Object> toCache = new HashMap<>();
         List<String> keyList = new ArrayList<>();
 
-        cache.cacheMany(toCache);
+        cache.pushMany(toCache);
         cache.invalidateMany(keyList);
         Map<String, Boolean> existsMap = cache.existsMany(keyList);
         Map<String, Object> resolveMap = cache.resolveMany(keyList); 
