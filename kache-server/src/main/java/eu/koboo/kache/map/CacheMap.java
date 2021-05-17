@@ -5,7 +5,7 @@ import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-public class CacheMap<ID, V> extends ConcurrentHashMap<ID, V> {
+public class CacheMap<K, V> extends ConcurrentHashMap<K, V> {
 
     private static final Timer CACHE_TIMER = new Timer("CacheTimer");
 
@@ -13,7 +13,7 @@ public class CacheMap<ID, V> extends ConcurrentHashMap<ID, V> {
         Runtime.getRuntime().addShutdownHook(new Thread(CACHE_TIMER::cancel));
     }
 
-    private final Map<ID, CacheData> dataMap = new ConcurrentHashMap<>();
+    private final Map<K, CacheData> dataMap = new ConcurrentHashMap<>();
 
     private long lifeTime;
 
@@ -26,7 +26,7 @@ public class CacheMap<ID, V> extends ConcurrentHashMap<ID, V> {
         return lifeTime;
     }
 
-    protected Map<ID, CacheData> getDataMap() {
+    protected Map<K, CacheData> getDataMap() {
         return dataMap;
     }
 
@@ -34,31 +34,31 @@ public class CacheMap<ID, V> extends ConcurrentHashMap<ID, V> {
         this.lifeTime = lifeTime;
     }
 
-    public boolean isForced(ID key) {
+    public boolean isForced(K key) {
         CacheData data = dataMap.get(key);
         return data != null && data.isForced();
     }
 
-    public void setForced(ID key, boolean forced) {
+    public void setForced(K key, boolean forced) {
         dataMap.remove(key);
         dataMap.put(key, new CacheData(System.currentTimeMillis(), forced));
     }
 
-    public V put(ID key, V value, boolean forced) {
+    public V put(K key, V value, boolean forced) {
         put(key, value);
         setForced(key, forced);
         return value;
     }
 
     @Override
-    public V put(ID key, V value) {
+    public V put(K key, V value) {
         dataMap.remove(key);
         dataMap.put(key, new CacheData(System.currentTimeMillis(), isForced(key)));
         return super.put(key, value);
     }
 
     @Override
-    public V putIfAbsent(ID key, V value) {
+    public V putIfAbsent(K key, V value) {
         dataMap.putIfAbsent(key, new CacheData(System.currentTimeMillis(), isForced(key)));
         return super.putIfAbsent(key, value);
     }

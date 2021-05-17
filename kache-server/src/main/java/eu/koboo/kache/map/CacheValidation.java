@@ -5,7 +5,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CacheValidation<ID, V> extends TimerTask {
+public class CacheValidation<K, V> extends TimerTask {
 
     private static final ExecutorService VALIDATION_EXECUTOR = Executors.newFixedThreadPool(2);
 
@@ -13,16 +13,16 @@ public class CacheValidation<ID, V> extends TimerTask {
         Runtime.getRuntime().addShutdownHook(new Thread(VALIDATION_EXECUTOR::shutdown));
     }
 
-    private final CacheMap<ID, V> cacheMap;
+    private final CacheMap<K, V> cacheMap;
 
-    public CacheValidation(CacheMap<ID, V> cacheMap) {
+    public CacheValidation(CacheMap<K, V> cacheMap) {
         this.cacheMap = cacheMap;
     }
 
     @Override
     public void run() {
         VALIDATION_EXECUTOR.execute(() -> {
-            for(ID id : new ArrayList<>(cacheMap.getDataMap().keySet())) {
+            for(K id : new ArrayList<>(cacheMap.getDataMap().keySet())) {
                 V value = cacheMap.get(id);
                 CacheData cacheData = cacheMap.getDataMap().get(id);
                 if(value == null || cacheData == null) {

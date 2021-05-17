@@ -39,7 +39,7 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
     }
 
     @Override
-    public void cacheMany(Map<String, V> mapToCache) {
+    public void publishMany(Map<String, V> mapToCache) {
         if (mapToCache == null || mapToCache.isEmpty())
             return;
         Map<String, byte[]> cacheMap = new HashMap<>();
@@ -47,7 +47,7 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
             byte[] valueBytes = Kache.ENDPOINT_BUILDER.getSerializerPool().serialize(entry.getValue());
             cacheMap.put(entry.getKey(), valueBytes);
         }
-        ClientCacheManyPacket packet = new ClientCacheManyPacket();
+        ClientPushManyPacket packet = new ClientPushManyPacket();
         packet.setCacheName(cacheName);
         packet.setMapToCache(cacheMap);
         client.send(packet, false);
@@ -128,10 +128,10 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
     }
 
     @Override
-    public void cache(String id, V value) {
+    public void push(String id, V value) {
         Map<String, V> mapToCache = new HashMap<>();
         mapToCache.put(id, value);
-        cacheMany(mapToCache);
+        publishMany(mapToCache);
     }
 
     @Override

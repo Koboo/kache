@@ -20,8 +20,6 @@ public class KacheServer extends EndpointServer {
         eventHandler().register(new CacheServerListener(this));
     }
 
-
-
     public List<String> getAllKeys(String name) {
         name = name.toLowerCase(Locale.ROOT);
         CacheMap<String, byte[]> cacheMap = serverCache.get(name);

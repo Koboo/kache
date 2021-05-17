@@ -24,7 +24,7 @@ public class CacheServerListener extends EventListener<NativeReceiveEvent> {
     @Override
     public void onEvent(NativeReceiveEvent event) {
         cswitch(event.getTypeObject(),
-                ccase(ClientCacheManyPacket.class, p -> {
+                ccase(ClientPushManyPacket.class, p -> {
                     if (!p.getMapToCache().isEmpty())
                         server.cache(p.getCacheName(), p.getMapToCache());
                 }),

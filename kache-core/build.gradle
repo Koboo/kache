@@ -1,4 +1,5 @@
 dependencies {
     compile "eu.koboo:netty-core:${endpointVersion}"
-    compile 'eu.koboo:serial-fst:1.2.1'
+    compile 'eu.koboo:serial-fst:1.4'
+    compile 'eu.koboo:serial-core:1.4'
 }

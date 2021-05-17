@@ -7,12 +7,12 @@ import io.netty.buffer.ByteBuf;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClientCacheManyPacket implements NativePacket {
+public class ClientPushManyPacket implements NativePacket {
 
     private String cacheName;
     private Map<String, byte[]> mapToCache;
 
-    public ClientCacheManyPacket() {
+    public ClientPushManyPacket() {
     }
 
     public String getCacheName() {

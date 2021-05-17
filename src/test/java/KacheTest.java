@@ -28,28 +28,18 @@ public class KacheTest {
 
         System.out.println("Exists(before): " + localCache.exists(testObj.getString()));
 
-        Thread.sleep(500L);
-
-        localCache.cache(testObj.getString(), testObj);
+        localCache.push(testObj.getString(), testObj);
         System.out.println("Cached!");
 
-        Thread.sleep(500L);
-
         System.out.println("Exists(after): " + localCache.exists(testObj.getString()));
-
-        Thread.sleep(500L);
 
         testObj = localCache.resolve(testObj.getString());
         System.out.println("Resolved!");
 
         System.out.println("Obj: " + (testObj != null ? testObj.toString() : "NULL"));
 
-        Thread.sleep(500L);
-
         localCache.invalidate(testObj.getString());
         System.out.println("Invalidated!");
-
-        Thread.sleep(500L);
 
         System.out.println("Exists(invalid): " + localCache.exists(testObj.getString()));
     }
