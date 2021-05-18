@@ -3,6 +3,7 @@ package eu.koboo.kache;
 import eu.koboo.endpoint.server.EndpointServer;
 import eu.koboo.kache.listener.KacheServerListener;
 import eu.koboo.kache.map.CacheMap;
+import eu.koboo.nettyutils.NettyType;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,7 +14,7 @@ public class KacheServer extends EndpointServer {
     private final Map<String, CacheMap<String, byte[]>> serverCache = new ConcurrentHashMap<>();
 
     public KacheServer() {
-        this(-1);
+        this(!NettyType.prepareType().isEpoll() ? 6565 : -1);
     }
 
     public KacheServer(int port) {
@@ -31,7 +32,7 @@ public class KacheServer extends EndpointServer {
         name = name.toLowerCase(Locale.ROOT);
         CacheMap<String, byte[]> cacheMap = serverCache.get(name);
         if (cacheMap == null)
-            cacheMap = new CacheMap<>(TimeUnit.SECONDS.toMillis(5));
+            cacheMap = new CacheMap<>(TimeUnit.SECONDS.toMillis(30));
         for (Map.Entry<String, byte[]> entry : mapToCache.entrySet()) {
             cacheMap.put(entry.getKey(), entry.getValue());
         }
@@ -96,7 +97,7 @@ public class KacheServer extends EndpointServer {
         name = name.toLowerCase(Locale.ROOT);
         CacheMap<String, byte[]> cacheMap = serverCache.get(name);
         if(cacheMap != null) {
-            cacheMap.setLifeTime(cacheTime);
+            cacheMap.setTimeToLive(cacheTime);
         }
     }
 
