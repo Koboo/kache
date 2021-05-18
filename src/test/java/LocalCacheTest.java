@@ -1,11 +1,12 @@
 import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.KacheServer;
-import eu.koboo.kache.cache.LocalCache;
+import eu.koboo.kache.cache.CacheType;
+import eu.koboo.kache.cache.local.LocalCache;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class KacheTest {
+public class LocalCacheTest {
 
     static KacheServer server;
     static KacheClient client;
@@ -20,7 +21,7 @@ public class KacheTest {
         client = new KacheClient("localhost", 6565);
         client.start();
 
-        localCache = client.getCache("test_cache");
+        localCache = client.getCache("test_cache", CacheType.LOCAL);
     }
 
     @Test
