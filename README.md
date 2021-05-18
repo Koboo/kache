@@ -33,6 +33,7 @@ public class SomeClass {
 
 ````java
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 public class SomeClass {
 
@@ -40,35 +41,46 @@ public class SomeClass {
         KacheClient client = new KacheClient();
 
         String key = "key"; // any key
-        Object object = new Object(); // any object 
+        TestObj object = new TestObj("", 1L, -1); // any object, have to extend Serializable 
 
-        LocalCache<Object> cache = client.getCache("object_cache");
+        SharedCache<Object> cache = client.getCache("object_cache");
 
-        // Put into cache
+        // Put/Set/Push into cache
         cache.push(key, object);
 
         // Check if key exists in cache 
-        boolean exists = cache.exists(key);
+        boolean exists = cache.exists(key).sync();
+        // Or do something with the CompletableFuture
+        CompletableFuture<Boolean> future = cache.exists(key).future();
 
         // Remove from cache
         cache.invalidate(key);
 
-        // Get from cache
-        object = cache.resolve(key);
+        // Get from cache and sync the future
+        TestObj objfromCache = cache.resolve(key).sync();
+        // Or do something with the CompletableFuture
+        CompletableFuture<TestObj> future = cache.resolve(key).future();
 
         // All methods are also available with keyword "Many"
 
-        Map<String, Object> toCache = new HashMap<>();
-        List<String> keyList = new ArrayList<>();
-
+        Map<String, TestObj> toCache = new HashMap<>();
         cache.pushMany(toCache);
-        cache.invalidateMany(keyList);
-        Map<String, Boolean> existsMap = cache.existsMany(keyList);
-        Map<String, Object> resolveMap = cache.resolveMany(keyList); 
-
-        // Special methods:
         
-        Map<String, Object> resolveAllMap = cache.resolveAll();
+        
+        List<String> keyList = new ArrayList<>();
+        
+        cache.invalidateMany(keyList);
+        
+        Map<String, Boolean> existsMap = cache.existsMany(keyList).sync();
+        CompletableFuture<Map<String, Boolean>> futureMap = cache.existsMany(keyList).future();
+        
+        Map<String, TestObj> resolveMap = cache.resolveMany(keyList).sync();
+        CompletableFuture<Map<String, TestObj>> future = cache.resolveMany(keyList).future();
+        
+        // Special methods:
+
+        Map<String, Object> resolveAllMap = cache.resolveAll().sync();
+        CompletableFuture<Map<String, TestObj>> resolveAllMap = cache.resolveAll().future();
         cache.invalidateAll();
     }
 
