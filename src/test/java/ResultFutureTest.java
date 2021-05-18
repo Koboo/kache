@@ -1,17 +1,16 @@
 import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.KacheServer;
-import eu.koboo.kache.cache.CacheType;
-import eu.koboo.kache.cache.future.FutureCache;
+import eu.koboo.kache.cache.future.SharedCache;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class FutureCacheTest {
+public class ResultFutureTest {
 
     static KacheServer server;
     static KacheClient client;
 
-    static FutureCache<TestObj> futureCache;
+    static SharedCache<TestObj> sharedCache;
 
     @BeforeClass
     public static void before() throws InterruptedException {
@@ -21,32 +20,32 @@ public class FutureCacheTest {
         client = new KacheClient("localhost", 6565);
         client.start();
 
-        futureCache = client.getCache("test_cache", CacheType.FUTURE);
+        sharedCache = client.getCache("test_cache");
     }
 
     @Test
     public void testA() throws InterruptedException {
         TestObj testObj = new TestObj("TEst", 1, -1L);
 
-        futureCache.exists(testObj.getString()).whenComplete((ex, e) -> System.out.println("Exists(before): " + ex));
+        sharedCache.exists(testObj.getString()).future().whenComplete((ex, e) -> System.out.println("Exists(before): " + ex));
 
         Thread.sleep(800);
 
-        futureCache.push(testObj.getString(), testObj);
+        sharedCache.push(testObj.getString(), testObj);
         System.out.println("Cached!");
 
-        futureCache.exists(testObj.getString()).whenComplete((ex, e) -> System.out.println("Exists(after): " + ex));
+        sharedCache.exists(testObj.getString()).future().whenComplete((ex, e) -> System.out.println("Exists(after): " + ex));
 
         Thread.sleep(800);
 
-        futureCache.resolve(testObj.getString()).whenComplete((obj, e) -> System.out.println("Resolved"));
+        sharedCache.resolve(testObj.getString()).future().whenComplete((obj, e) -> System.out.println("Resolved"));
 
         Thread.sleep(800);
 
-        futureCache.invalidate(testObj.getString());
+        sharedCache.invalidate(testObj.getString());
         System.out.println("Invalidated!");
 
-        futureCache.exists(testObj.getString()).whenComplete((ex, e) -> System.out.println("Exists(invalid): " + ex));
+        sharedCache.exists(testObj.getString()).future().whenComplete((ex, e) -> System.out.println("Exists(invalid): " + ex));
 
         Thread.sleep(800);
     }

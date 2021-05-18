@@ -1,17 +1,16 @@
 import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.KacheServer;
-import eu.koboo.kache.cache.CacheType;
-import eu.koboo.kache.cache.local.LocalCache;
+import eu.koboo.kache.cache.future.SharedCache;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class LocalCacheTest {
+public class ResultSyncTest {
 
     static KacheServer server;
     static KacheClient client;
 
-    static LocalCache<TestObj> localCache;
+    static SharedCache<TestObj> localCache;
 
     @BeforeClass
     public static void before() throws InterruptedException {
@@ -21,21 +20,21 @@ public class LocalCacheTest {
         client = new KacheClient("localhost", 6565);
         client.start();
 
-        localCache = client.getCache("test_cache", CacheType.LOCAL);
+        localCache = client.getCache("test_cache");
     }
 
     @Test
     public void testA() throws InterruptedException {
         TestObj testObj = new TestObj("TEst", 1, -1L);
 
-        System.out.println("Exists(before): " + localCache.exists(testObj.getString()));
+        System.out.println("Exists(before): " + localCache.exists(testObj.getString()).sync());
 
         localCache.push(testObj.getString(), testObj);
         System.out.println("Cached!");
 
-        System.out.println("Exists(after): " + localCache.exists(testObj.getString()));
+        System.out.println("Exists(after): " + localCache.exists(testObj.getString()).sync());
 
-        testObj = localCache.resolve(testObj.getString());
+        testObj = localCache.resolve(testObj.getString()).sync();
         System.out.println("Resolved!");
 
         System.out.println("Obj: " + (testObj != null ? testObj.toString() : "NULL"));
@@ -43,7 +42,7 @@ public class LocalCacheTest {
         localCache.invalidate(testObj.getString());
         System.out.println("Invalidated!");
 
-        System.out.println("Exists(invalid): " + localCache.exists(testObj.getString()));
+        System.out.println("Exists(invalid): " + localCache.exists(testObj.getString()).sync());
     }
 
     @AfterClass
