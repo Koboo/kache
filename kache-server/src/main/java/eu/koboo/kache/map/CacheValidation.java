@@ -30,7 +30,7 @@ public class CacheValidation<K, V> extends TimerTask {
                     cacheMap.getDataMap().remove(id);
                     continue;
                 }
-                long validUntil = cacheData.getLastModified() + cacheMap.getLifeTime();
+                long validUntil = cacheData.getLastModified() + cacheMap.getTimeToLive();
                 if(!cacheData.isForced() && validUntil < System.currentTimeMillis()) {
                     cacheMap.remove(id);
                     cacheMap.getDataMap().remove(id);

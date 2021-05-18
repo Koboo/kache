@@ -4,11 +4,11 @@ import eu.koboo.kache.packets.CachePacket;
 import eu.koboo.nettyutils.BufUtils;
 import io.netty.buffer.ByteBuf;
 
-public class ClientCacheTimePacket extends CachePacket {
+public class ClientTimeToLivePacket extends CachePacket {
 
     private long cacheTimeMillis;
 
-    public ClientCacheTimePacket() {
+    public ClientTimeToLivePacket() {
     }
 
     public long getCacheTimeMillis() {

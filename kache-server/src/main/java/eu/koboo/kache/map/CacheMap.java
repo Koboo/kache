@@ -15,23 +15,23 @@ public class CacheMap<K, V> extends ConcurrentHashMap<K, V> {
 
     private final Map<K, CacheData> dataMap = new ConcurrentHashMap<>();
 
-    private long lifeTime;
+    private long timeToLive;
 
     public CacheMap(long lifeTimeInMillis) {
-        this.lifeTime = lifeTimeInMillis;
+        this.timeToLive = lifeTimeInMillis;
         CACHE_TIMER.schedule(new CacheValidation<>(this), 0, TimeUnit.SECONDS.toMillis(30));
     }
 
-    protected long getLifeTime() {
-        return lifeTime;
+    protected long getTimeToLive() {
+        return timeToLive;
     }
 
     protected Map<K, CacheData> getDataMap() {
         return dataMap;
     }
 
-    public void setLifeTime(long lifeTime) {
-        this.lifeTime = lifeTime;
+    public void setTimeToLive(long timeToLive) {
+        this.timeToLive = timeToLive;
     }
 
     public boolean isForced(K key) {
@@ -42,12 +42,6 @@ public class CacheMap<K, V> extends ConcurrentHashMap<K, V> {
     public void setForced(K key, boolean forced) {
         dataMap.remove(key);
         dataMap.put(key, new CacheData(System.currentTimeMillis(), forced));
-    }
-
-    public V put(K key, V value, boolean forced) {
-        put(key, value);
-        setForced(key, forced);
-        return value;
     }
 
     @Override
