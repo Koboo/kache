@@ -4,7 +4,7 @@ import eu.koboo.endpoint.core.protocols.natives.NativeReceiveEvent;
 import eu.koboo.event.listener.EventListener;
 import eu.koboo.event.listener.EventPriority;
 import eu.koboo.kache.KacheClient;
-import eu.koboo.kache.cache.local.LocalCacheImpl;
+import eu.koboo.kache.cache.future.SharedCacheImpl;
 import eu.koboo.kache.packets.server.ServerExistsManyPacket;
 import eu.koboo.kache.packets.server.ServerResolveManyPacket;
 import eu.koboo.nettyutils.SharedFutures;
@@ -28,7 +28,7 @@ public class KacheClientListener extends EventListener<NativeReceiveEvent> {
         cswitch(event.getTypeObject(),
                 ccase(ServerResolveManyPacket.class, p -> {
                     String futureId = p.getFutureId();
-                    LocalCacheImpl<?> localCache = (LocalCacheImpl<?>) client.getCache(p.getCacheName());
+                    SharedCacheImpl<?> localCache = (SharedCacheImpl<?>) client.getCache(p.getCacheName());
                     localCache.completeResolveFuture(futureId, p.getMapToResolve());
                 }),
                 ccase(ServerExistsManyPacket.class, p -> {
