@@ -1,7 +1,8 @@
-package eu.koboo.kache.cache;
+package eu.koboo.kache.cache.local;
 
 import eu.koboo.kache.Kache;
 import eu.koboo.kache.KacheClient;
+import eu.koboo.kache.cache.CacheType;
 import eu.koboo.kache.packets.client.*;
 import eu.koboo.nettyutils.SharedFutures;
 
@@ -18,6 +19,16 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
     public LocalCacheImpl(String cacheName, KacheClient client) {
         this.cacheName = cacheName.toLowerCase(Locale.ROOT);
         this.client = client;
+    }
+
+    @Override
+    public String getCacheName() {
+        return cacheName;
+    }
+
+    @Override
+    public CacheType getType() {
+        return CacheType.LOCAL;
     }
 
     @Override
