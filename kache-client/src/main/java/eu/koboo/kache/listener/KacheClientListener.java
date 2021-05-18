@@ -4,7 +4,7 @@ import eu.koboo.endpoint.core.protocols.natives.NativeReceiveEvent;
 import eu.koboo.event.listener.EventListener;
 import eu.koboo.event.listener.EventPriority;
 import eu.koboo.kache.KacheClient;
-import eu.koboo.kache.cache.LocalCacheImpl;
+import eu.koboo.kache.cache.local.LocalCacheImpl;
 import eu.koboo.kache.packets.server.ServerExistsManyPacket;
 import eu.koboo.kache.packets.server.ServerResolveManyPacket;
 import eu.koboo.nettyutils.SharedFutures;
