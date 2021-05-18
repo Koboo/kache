@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public interface LocalCache<V extends Serializable> {
+public interface Cache<V extends Serializable> {
 
-    Map<String, Boolean> existsMany(List<String> id);
+    String getCacheName();
 
-    boolean exists(String id);
+    CacheType getType();
 
     void pushMany(Map<String, V> mapToCache);
 
@@ -20,16 +20,9 @@ public interface LocalCache<V extends Serializable> {
 
     void invalidateAll();
 
-    Map<String, V> resolveMany(List<String> listToResolve);
-
-    V resolve(String id);
-
-    Map<String, V> resolveAll();
-
     void forceMany(Map<String, Boolean> id);
 
     void force(String id, boolean force);
 
     void timeToLive(long timeToLive);
-
 }
