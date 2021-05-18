@@ -1,49 +1,65 @@
-package eu.koboo.kache.cache;
+package eu.koboo.kache.cache.future;
 
 import eu.koboo.kache.Kache;
 import eu.koboo.kache.KacheClient;
+import eu.koboo.kache.cache.result.ExistsManyResult;
+import eu.koboo.kache.cache.result.ExistsResult;
+import eu.koboo.kache.cache.result.ResolveManyResult;
+import eu.koboo.kache.cache.result.ResolveResult;
 import eu.koboo.kache.packets.client.*;
 import eu.koboo.nettyutils.SharedFutures;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
-public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
+public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
 
     final String cacheName;
     final KacheClient client;
 
-    public LocalCacheImpl(String cacheName, KacheClient client) {
+    public SharedCacheImpl(String cacheName, KacheClient client) {
         this.cacheName = cacheName.toLowerCase(Locale.ROOT);
         this.client = client;
     }
 
     @Override
-    public Map<String, Boolean> existsMany(List<String> listToExists) {
+    public String getCacheName() {
+        return cacheName;
+    }
+
+    private CompletableFuture<Map<String, Boolean>> existsFuture(List<String> listToExists) {
+        Map.Entry<String, CompletableFuture<Map<String, Boolean>>> futureEntry = SharedFutures.generateFuture();
+        CompletableFuture<Map<String, Boolean>> future = futureEntry.getValue();
         try {
-            if (listToExists == null || listToExists.isEmpty())
-                return new HashMap<>();
-            Map.Entry<String, CompletableFuture<Map<String, Boolean>>> futureEntry = SharedFutures.generateFuture();
+            if (listToExists == null || listToExists.isEmpty()) {
+                future.complete(new HashMap<>());
+                return future;
+            }
             ClientExistsManyPacket packet = new ClientExistsManyPacket();
             packet.setFutureId(futureEntry.getKey());
             packet.setCacheName(cacheName);
             packet.setListToContains(listToExists);
             client.send(packet, false);
-            return futureEntry.getValue().get();
         } catch (Exception e) {
             client.onException(getClass(), e);
+            future.complete(new HashMap<>());
         }
-        return new HashMap<>();
+        return future;
     }
 
     @Override
-    public boolean exists(String id) {
+    public ExistsManyResult existsMany(List<String> listToExists) {
+        CompletableFuture<Map<String, Boolean>> future = existsFuture(listToExists);
+        return new ExistsManyResult(future);
+    }
+
+    @Override
+    public ExistsResult exists(String id) {
         List<String> listToExists = new ArrayList<>();
         listToExists.add(id);
-        Map<String, Boolean> existsMap = existsMany(listToExists);
-        return existsMap != null && !existsMap.isEmpty() && existsMap.containsKey(id) && existsMap.get(id);
+        CompletableFuture<Map<String, Boolean>> future = existsFuture(listToExists);
+        return new ExistsResult(id, future);
     }
 
     @Override
@@ -92,47 +108,55 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
         client.send(packet, false);
     }
 
-    @Override
-    public Map<String, V> resolveMany(List<String> listToResolve) {
+    private CompletableFuture<Map<String, V>> resolveFuture(List<String> listToResolve) {
+        Map.Entry<String, CompletableFuture<Map<String, V>>> futureEntry = SharedFutures.generateFuture();
+        CompletableFuture<Map<String, V>> future = futureEntry.getValue();
         try {
-            if (listToResolve == null || listToResolve.isEmpty())
-                return new HashMap<>();
-
-            Map.Entry<String, CompletableFuture<Map<String, V>>> futureEntry = SharedFutures.generateFuture();
+            if (listToResolve == null || listToResolve.isEmpty()) {
+                future.complete(new HashMap<>());
+                return future;
+            }
             ClientResolveManyPacket packet = new ClientResolveManyPacket();
             packet.setFutureId(futureEntry.getKey());
             packet.setCacheName(cacheName);
             packet.setListToResolve(listToResolve);
             client.send(packet, false);
-            return futureEntry.getValue().get(listToResolve.size() * 100L, TimeUnit.MILLISECONDS);
+            return future;
         } catch (Exception e) {
             client.onException(getClass(), e);
+            future.complete(new HashMap<>());
         }
-        return new HashMap<>();
+        return future;
     }
 
     @Override
-    public V resolve(String id) {
+    public ResolveManyResult<V> resolveMany(List<String> listToResolve) {
+        CompletableFuture<Map<String, V>> future = resolveFuture(listToResolve);
+        return new ResolveManyResult<>(future);
+    }
+
+    @Override
+    public ResolveResult<V> resolve(String id) {
         List<String> listToResolve = new ArrayList<>();
         listToResolve.add(id);
-        Map<String, V> resolveMap = resolveMany(listToResolve);
-
-        return resolveMap != null && !resolveMap.isEmpty() && resolveMap.containsKey(id) ? resolveMap.get(id) : null;
+        CompletableFuture<Map<String, V>> future = resolveFuture(listToResolve);
+        return new ResolveResult<>(id, future);
     }
 
     @Override
-    public Map<String, V> resolveAll() {
+    public ResolveManyResult<V> resolveAll() {
+        Map.Entry<String, CompletableFuture<Map<String, V>>> futureEntry = SharedFutures.generateFuture();
+        CompletableFuture<Map<String, V>> future = futureEntry.getValue();
         try {
-            Map.Entry<String, CompletableFuture<Map<String, V>>> futureEntry = SharedFutures.generateFuture();
             ClientResolveAllPacket packet = new ClientResolveAllPacket();
             packet.setFutureId(futureEntry.getKey());
             packet.setCacheName(cacheName);
             client.send(packet, false);
-            return futureEntry.getValue().get();
         } catch (Exception e) {
             client.onException(getClass(), e);
+            future.complete(new HashMap<>());
         }
-        return new HashMap<>();
+        return new ResolveManyResult<>(future);
     }
 
     @Override

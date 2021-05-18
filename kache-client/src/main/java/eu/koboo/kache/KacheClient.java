@@ -1,8 +1,8 @@
 package eu.koboo.kache;
 
 import eu.koboo.endpoint.client.EndpointClient;
-import eu.koboo.kache.cache.LocalCache;
-import eu.koboo.kache.cache.LocalCacheImpl;
+import eu.koboo.kache.cache.future.SharedCache;
+import eu.koboo.kache.cache.future.SharedCacheImpl;
 import eu.koboo.kache.listener.KacheClientListener;
 
 import java.io.Serializable;
@@ -12,7 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class KacheClient extends EndpointClient {
 
-    private final Map<String, LocalCacheImpl<?>> clientCache = new ConcurrentHashMap<>();
+    private final Map<String, SharedCache<?>> futureCacheMap = new ConcurrentHashMap<>();
+
 
     public KacheClient() {
         this(null, -1);
@@ -23,14 +24,14 @@ public class KacheClient extends EndpointClient {
         eventHandler().register(new KacheClientListener(this));
     }
 
-    public <V extends Serializable> LocalCache<V> getCache(String name) {
+    public <C extends SharedCache<V>, V extends Serializable> C getCache(String name) {
         name = name.toLowerCase(Locale.ROOT);
-        LocalCacheImpl<V> localCache = (LocalCacheImpl<V>) clientCache.get(name);
-        if(localCache == null) {
-            localCache = new LocalCacheImpl<>(name, this);
-            clientCache.put(name, localCache);
+        SharedCache<V> localCache = (SharedCache<V>) futureCacheMap.get(name);
+        if (localCache == null) {
+            localCache = new SharedCacheImpl<>(name, this);
+            futureCacheMap.put(name, localCache);
         }
-        return localCache;
+        return (C) localCache;
     }
 
 }
