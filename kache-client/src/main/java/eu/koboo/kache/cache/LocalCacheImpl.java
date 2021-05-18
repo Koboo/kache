@@ -31,7 +31,7 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
             packet.setCacheName(cacheName);
             packet.setListToContains(listToExists);
             client.send(packet, false);
-            return futureEntry.getValue().get(listToExists.size() * 100L, TimeUnit.MILLISECONDS);
+            return futureEntry.getValue().get();
         } catch (Exception e) {
             client.onException(getClass(), e);
         }
@@ -98,21 +98,13 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
             if (listToResolve == null || listToResolve.isEmpty())
                 return new HashMap<>();
 
-            Map.Entry<String, CompletableFuture<Map<String, byte[]>>> futureEntry = SharedFutures.generateFuture();
+            Map.Entry<String, CompletableFuture<Map<String, V>>> futureEntry = SharedFutures.generateFuture();
             ClientResolveManyPacket packet = new ClientResolveManyPacket();
             packet.setFutureId(futureEntry.getKey());
             packet.setCacheName(cacheName);
             packet.setListToResolve(listToResolve);
             client.send(packet, false);
-            Map<String, byte[]> resolvedMap = futureEntry.getValue().get(listToResolve.size() * 100L, TimeUnit.MILLISECONDS);
-            if (resolvedMap == null || resolvedMap.isEmpty())
-                return new HashMap<>();
-            Map<String, V> serializedMap = new HashMap<>();
-            for (Map.Entry<String, byte[]> entry : resolvedMap.entrySet()) {
-                V value = (V) Kache.ENDPOINT_BUILDER.getSerializerPool().deserialize(entry.getValue());
-                serializedMap.put(entry.getKey(), value);
-            }
-            return serializedMap;
+            return futureEntry.getValue().get(listToResolve.size() * 100L, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             client.onException(getClass(), e);
         }
@@ -131,20 +123,12 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
     @Override
     public Map<String, V> resolveAll() {
         try {
-            Map.Entry<String, CompletableFuture<Map<String, byte[]>>> futureEntry = SharedFutures.generateFuture();
+            Map.Entry<String, CompletableFuture<Map<String, V>>> futureEntry = SharedFutures.generateFuture();
             ClientResolveAllPacket packet = new ClientResolveAllPacket();
             packet.setFutureId(futureEntry.getKey());
             packet.setCacheName(cacheName);
             client.send(packet, false);
-            Map<String, byte[]> resolvedMap = futureEntry.getValue().get();
-            if (resolvedMap == null || resolvedMap.isEmpty())
-                return new HashMap<>();
-            Map<String, V> serializedMap = new HashMap<>();
-            for (Map.Entry<String, byte[]> entry : resolvedMap.entrySet()) {
-                V value = (V) Kache.ENDPOINT_BUILDER.getSerializerPool().deserialize(entry.getValue());
-                serializedMap.put(entry.getKey(), value);
-            }
-            return serializedMap;
+            return futureEntry.getValue().get();
         } catch (Exception e) {
             client.onException(getClass(), e);
         }
@@ -169,10 +153,23 @@ public class LocalCacheImpl<V extends Serializable> implements LocalCache<V> {
     }
 
     @Override
-    public void cacheTime(long cacheTime) {
-        ClientCacheTimePacket packet = new ClientCacheTimePacket();
+    public void timeToLive(long timeToLive) {
+        ClientTimeToLivePacket packet = new ClientTimeToLivePacket();
         packet.setCacheName(cacheName);
-        packet.setCacheTimeMillis(cacheTime);
+        packet.setCacheTimeMillis(timeToLive);
         client.send(packet, false);
+    }
+
+    public void completeResolveFuture(String futureId, Map<String, byte[]> resolvedMap) {
+        CompletableFuture<Map<String, V>> future = SharedFutures.getFuture(futureId);
+
+        Map<String, V> serializedMap = new HashMap<>();
+        if (resolvedMap != null && !resolvedMap.isEmpty()) {
+            for (Map.Entry<String, byte[]> entry : resolvedMap.entrySet()) {
+                V value = (V) Kache.ENDPOINT_BUILDER.getSerializerPool().deserialize(entry.getValue());
+                serializedMap.put(entry.getKey(), value);
+            }
+        }
+        future.complete(serializedMap);
     }
 }

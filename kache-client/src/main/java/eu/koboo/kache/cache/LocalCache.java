@@ -30,6 +30,6 @@ public interface LocalCache<V extends Serializable> {
 
     void force(String id, boolean force);
 
-    void cacheTime(long cacheTime);
+    void timeToLive(long timeToLive);
 
 }
