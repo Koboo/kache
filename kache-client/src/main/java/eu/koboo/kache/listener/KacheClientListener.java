@@ -1,25 +1,25 @@
-package eu.koboo.kache;
+package eu.koboo.kache.listener;
 
 import eu.koboo.endpoint.core.protocols.natives.NativeReceiveEvent;
 import eu.koboo.event.listener.EventListener;
 import eu.koboo.event.listener.EventPriority;
+import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.cache.LocalCacheImpl;
 import eu.koboo.kache.packets.server.ServerExistsManyPacket;
 import eu.koboo.kache.packets.server.ServerResolveManyPacket;
 import eu.koboo.nettyutils.SharedFutures;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static eu.koboo.nettyutils.SwitchClass.ccase;
 import static eu.koboo.nettyutils.SwitchClass.cswitch;
 
-public class CacheClientListener extends EventListener<NativeReceiveEvent> {
+public class KacheClientListener extends EventListener<NativeReceiveEvent> {
 
     final KacheClient client;
 
-    public CacheClientListener(KacheClient client) {
+    public KacheClientListener(KacheClient client) {
         this.client = client;
     }
 

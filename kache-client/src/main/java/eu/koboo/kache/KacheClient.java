@@ -3,6 +3,7 @@ package eu.koboo.kache;
 import eu.koboo.endpoint.client.EndpointClient;
 import eu.koboo.kache.cache.LocalCache;
 import eu.koboo.kache.cache.LocalCacheImpl;
+import eu.koboo.kache.listener.KacheClientListener;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -19,7 +20,7 @@ public class KacheClient extends EndpointClient {
 
     public KacheClient(String host, int port) {
         super(Kache.ENDPOINT_BUILDER, host, port);
-        eventHandler().register(new CacheClientListener(this));
+        eventHandler().register(new KacheClientListener(this));
     }
 
     public <V extends Serializable> LocalCache<V> getCache(String name) {

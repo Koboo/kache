@@ -16,7 +16,7 @@ public class Kache {
 
     public static final EndpointBuilder ENDPOINT_BUILDER = EndpointBuilder.newBuilder()
             .logging(false)
-            .compression(Compression.SNAPPY)
+            .compression(Compression.NONE)
             .protocol(Protocol.NATIVE)
             .eventMode(EventMode.SYNC)
             .errorMode(ErrorMode.STACK_TRACE)

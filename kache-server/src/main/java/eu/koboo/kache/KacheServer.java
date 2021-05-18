@@ -1,5 +1,6 @@
 package eu.koboo.kache;
 
+import eu.koboo.endpoint.core.builder.param.ErrorMode;
 import eu.koboo.endpoint.server.EndpointServer;
 import eu.koboo.kache.listener.KacheServerListener;
 import eu.koboo.kache.map.CacheMap;
@@ -18,7 +19,7 @@ public class KacheServer extends EndpointServer {
     }
 
     public KacheServer(int port) {
-        super(Kache.ENDPOINT_BUILDER, port);
+        super(Kache.ENDPOINT_BUILDER.errorMode(ErrorMode.EVENT), port);
         eventHandler().register(new KacheServerListener(this));
     }
 
