@@ -22,7 +22,7 @@ public class Kache {
             .errorMode(ErrorMode.STACK_TRACE)
             .serializer(new SerializerPool(FSTSerialization.class))
             .setDomainSocket(NettyType.prepareType().isEpoll() ? "/tmp/kache.sock" : null)
-            .registerNative(1, ClientCacheTimePacket.class)
+            .registerNative(1, ClientTimeToLivePacket.class)
             .registerNative(2, ClientExistsManyPacket.class)
             .registerNative(3, ClientForceManyPacket.class)
             .registerNative(4, ClientInvalidateAllPacket.class)

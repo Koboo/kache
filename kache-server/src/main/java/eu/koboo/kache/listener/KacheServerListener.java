@@ -28,7 +28,7 @@ public class KacheServerListener extends EventListener<NativeReceiveEvent> {
     public void onEvent(NativeReceiveEvent event) {
         long start = System.nanoTime();
         cswitch(event.getTypeObject(),
-                ccase(ClientCacheTimePacket.class, p -> {
+                ccase(ClientTimeToLivePacket.class, p -> {
                     server.cacheTime(p.getCacheName(), p.getCacheTimeMillis());
                 }),
                 ccase(ClientPushManyPacket.class, p -> {
