@@ -13,9 +13,10 @@ public class KacheTest {
     static LocalCache<TestObj> localCache;
 
     @BeforeClass
-    public static void before() {
+    public static void before() throws InterruptedException {
         server = new KacheServer(6565);
         server.start();
+
         client = new KacheClient("localhost", 6565);
         client.start();
 
