@@ -16,10 +16,8 @@ whereby objects in the cache have to extend the class ``Serializable``!
 **It's recommend to use this framework only on localhost-running apps to share maps across JVM.**
 
 # Usage
-
-</br>
-**All functions are shown here as examples**
-</br>
+  
+**All functions are shown here as examples**  
 
 ### Create ``KacheClient``
 ````java
