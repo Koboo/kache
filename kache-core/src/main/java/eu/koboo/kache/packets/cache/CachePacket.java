@@ -1,4 +1,4 @@
-package eu.koboo.kache.packets;
+package eu.koboo.kache.packets.cache;
 
 import eu.koboo.endpoint.core.protocols.natives.NativePacket;
 

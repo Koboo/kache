@@ -1,6 +1,6 @@
-package eu.koboo.kache.packets.server;
+package eu.koboo.kache.packets.cache.server;
 
-import eu.koboo.kache.packets.CachePacket;
+import eu.koboo.kache.packets.cache.CachePacket;
 import eu.koboo.nettyutils.BufUtils;
 import io.netty.buffer.ByteBuf;
 
