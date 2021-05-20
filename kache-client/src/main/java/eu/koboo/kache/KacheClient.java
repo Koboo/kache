@@ -1,8 +1,8 @@
 package eu.koboo.kache;
 
 import eu.koboo.endpoint.client.EndpointClient;
-import eu.koboo.kache.cache.future.SharedCache;
-import eu.koboo.kache.cache.future.SharedCacheImpl;
+import eu.koboo.kache.cache.SharedCache;
+import eu.koboo.kache.cache.SharedCacheImpl;
 import eu.koboo.kache.channel.TransferChannel;
 import eu.koboo.kache.channel.TransferChannelImpl;
 import eu.koboo.kache.listener.KacheClientListener;

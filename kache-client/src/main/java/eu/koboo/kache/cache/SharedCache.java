@@ -1,4 +1,4 @@
-package eu.koboo.kache.cache.future;
+package eu.koboo.kache.cache;
 
 import eu.koboo.kache.cache.result.ExistsManyResult;
 import eu.koboo.kache.cache.result.ExistsResult;

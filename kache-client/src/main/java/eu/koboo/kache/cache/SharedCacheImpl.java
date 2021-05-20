@@ -1,4 +1,4 @@
-package eu.koboo.kache.cache.future;
+package eu.koboo.kache.cache;
 
 import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.cache.result.ExistsManyResult;
@@ -189,7 +189,7 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
         Map<String, V> serializedMap = new HashMap<>();
         if (resolvedMap != null && !resolvedMap.isEmpty()) {
             for (Map.Entry<String, byte[]> entry : resolvedMap.entrySet()) {
-                V value = (V) client.builder().getSerializerPool().deserialize(entry.getValue());
+                V value = client.builder().getSerializerPool().deserialize(entry.getValue());
                 serializedMap.put(entry.getKey(), value);
             }
         }
