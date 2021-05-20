@@ -1,3 +1,5 @@
+![Kache Logo](logo.png)
+
 # Koboo's Cache (Kache)
 
 Kache stands for Koboo's Cache and is a minimalistic and lightweight framework 
