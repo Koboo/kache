@@ -14,7 +14,8 @@ whereby objects in the cache have to extend the class Serializable!
 It's recommend to use this framework only on localhost-running apps to share maps across JVM.
 
 # Usage
-Create a new ``KacheClient``:
+
+### Create ``KacheClient``
 ````java
 public class SomeClass {
     
@@ -31,6 +32,7 @@ public class SomeClass {
 }
 ````
 
+### Use ``SharedCache<Object>``
 ````java
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -82,6 +84,42 @@ public class SomeClass {
         Map<String, Object> resolveAllMap = cache.resolveAll().sync();
         CompletableFuture<Map<String, TestObj>> resolveAllMap = cache.resolveAll().future();
         cache.invalidateAll();
+    }
+
+}
+````
+
+### Use ``TransferChannel<Object>``
+````java
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+
+public class SomeClass {
+
+    public static void main(String[] args) {
+        KacheClient client = new KacheClient();
+
+        TestObj object = new TestObj("", 1L, -1); // any object, have to extend Serializable 
+
+        TransferChannel<TestObj> channel = client.getTransfer("channelName"); // any Channel-Name
+
+        // Publish an object to the clients, who registered the specific TransferChannel 
+        channel.publish(object);
+        
+        // Get the name of the TransferChannel 
+        String channelName = channel.getChannel();
+        
+        // Register a Consumer, which if fired by receiving an Object on the TransferChannel
+        channel.receive(obj -> {
+            // Do something with the TestObj
+        });
+        
+        // Stop receiving the Objets of the TransferChannel
+        channel.pause(true);
+
+        // Start receiving the Objets of the TransferChannel
+        channel.pause(false);
+        
     }
 
 }
