@@ -11,4 +11,6 @@ public interface TransferChannel<V extends Serializable> {
 
     TransferChannel<V> receive(Consumer<V> valueConsumer);
 
+    TransferChannel<V> pause(boolean pause);
+
 }

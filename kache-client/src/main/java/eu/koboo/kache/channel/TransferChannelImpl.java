@@ -5,17 +5,22 @@ import eu.koboo.kache.packets.transfer.client.ClientRegisterTransferPacket;
 import eu.koboo.kache.packets.transfer.client.ClientTransferObjectPacket;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class TransferChannelImpl<V extends Serializable> implements TransferChannel<V> {
 
     private final KacheClient client;
     private final String channel;
-    private Consumer<V> consumer;
+    private final List<Consumer<V>> consumerList;
+    private boolean fireReceive;
 
     public TransferChannelImpl(KacheClient client, String channel) {
         this.client = client;
         this.channel = channel;
+        this.consumerList = new ArrayList<>();
+        this.fireReceive = true;
         ClientRegisterTransferPacket packet = new ClientRegisterTransferPacket();
         packet.setChannel(channel);
         client.send(packet, false);
@@ -38,14 +43,22 @@ public class TransferChannelImpl<V extends Serializable> implements TransferChan
 
     @Override
     public TransferChannel<V> receive(Consumer<V> valueConsumer) {
-        this.consumer = valueConsumer;
+        consumerList.add(valueConsumer);
+        return this;
+    }
+
+    @Override
+    public TransferChannel<V> pause(boolean pause) {
+        this.fireReceive = pause;
         return this;
     }
 
     public void onReceive(byte[] object) {
-        if(consumer != null) {
+        if(consumerList != null && !consumerList.isEmpty() && fireReceive) {
             V value = client.builder().getSerializerPool().deserialize(object);
-            consumer.accept(value);
+            for(Consumer<V> consumer : consumerList) {
+                consumer.accept(value);
+            }
         }
 
     }
