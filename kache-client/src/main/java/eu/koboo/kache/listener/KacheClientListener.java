@@ -5,8 +5,10 @@ import eu.koboo.event.listener.EventListener;
 import eu.koboo.event.listener.EventPriority;
 import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.cache.future.SharedCacheImpl;
-import eu.koboo.kache.packets.server.ServerExistsManyPacket;
-import eu.koboo.kache.packets.server.ServerResolveManyPacket;
+import eu.koboo.kache.channel.TransferChannelImpl;
+import eu.koboo.kache.packets.cache.server.ServerExistsManyPacket;
+import eu.koboo.kache.packets.cache.server.ServerResolveManyPacket;
+import eu.koboo.kache.packets.transfer.server.ServerTransferObjectPacket;
 import eu.koboo.nettyutils.SharedFutures;
 
 import java.util.Map;
@@ -36,6 +38,10 @@ public class KacheClientListener extends EventListener<NativeReceiveEvent> {
                     CompletableFuture<Map<String, Boolean>> future = SharedFutures.getFuture(futureId);
                     if(future != null)
                         future.complete(p.getMapToContains());
+                }),
+                ccase(ServerTransferObjectPacket.class, p -> {
+                    TransferChannelImpl<?> transferChannel = (TransferChannelImpl<?>) client.getTransfer(p.getChannel());
+                    transferChannel.onReceive(p.getValue());
                 }));
     }
 

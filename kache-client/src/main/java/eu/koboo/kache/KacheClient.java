@@ -3,6 +3,8 @@ package eu.koboo.kache;
 import eu.koboo.endpoint.client.EndpointClient;
 import eu.koboo.kache.cache.future.SharedCache;
 import eu.koboo.kache.cache.future.SharedCacheImpl;
+import eu.koboo.kache.channel.TransferChannel;
+import eu.koboo.kache.channel.TransferChannelImpl;
 import eu.koboo.kache.listener.KacheClientListener;
 
 import java.io.Serializable;
@@ -12,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class KacheClient extends EndpointClient {
 
-    private final Map<String, SharedCache<?>> futureCacheMap = new ConcurrentHashMap<>();
-
+    private final Map<String, SharedCache<?>> sharedCacheMap = new ConcurrentHashMap<>();
+    private final Map<String, TransferChannel<?>> transferChannelMap = new ConcurrentHashMap<>();
 
     public KacheClient() {
         this(null, -1);
@@ -26,12 +28,22 @@ public class KacheClient extends EndpointClient {
 
     public <C extends SharedCache<V>, V extends Serializable> C getCache(String name) {
         name = name.toLowerCase(Locale.ROOT);
-        SharedCache<V> localCache = (SharedCache<V>) futureCacheMap.get(name);
+        SharedCache<V> localCache = (SharedCache<V>) sharedCacheMap.get(name);
         if (localCache == null) {
             localCache = new SharedCacheImpl<>(name, this);
-            futureCacheMap.put(name, localCache);
+            sharedCacheMap.put(name, localCache);
         }
         return (C) localCache;
+    }
+
+    public <T extends TransferChannel<V>, V extends Serializable> T getTransfer(String channel) {
+        channel = channel.toLowerCase(Locale.ROOT);
+        TransferChannel<V> transferChannel = (TransferChannel<V>) transferChannelMap.get(channel);
+        if(transferChannel == null) {
+            transferChannel = new TransferChannelImpl<>(this, channel);
+            transferChannelMap.put(channel, transferChannel);
+        }
+        return (T) transferChannel;
     }
 
 }

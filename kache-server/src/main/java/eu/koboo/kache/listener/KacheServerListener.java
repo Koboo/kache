@@ -5,10 +5,14 @@ import eu.koboo.event.listener.EventListener;
 import eu.koboo.event.listener.EventPriority;
 import eu.koboo.kache.KacheServer;
 import eu.koboo.kache.events.KacheRequestEvent;
-import eu.koboo.kache.packets.CachePacket;
-import eu.koboo.kache.packets.client.*;
-import eu.koboo.kache.packets.server.ServerExistsManyPacket;
-import eu.koboo.kache.packets.server.ServerResolveManyPacket;
+import eu.koboo.kache.packets.cache.CachePacket;
+import eu.koboo.kache.packets.cache.client.*;
+import eu.koboo.kache.packets.cache.server.ServerExistsManyPacket;
+import eu.koboo.kache.packets.cache.server.ServerResolveManyPacket;
+import eu.koboo.kache.packets.transfer.TransferPacket;
+import eu.koboo.kache.packets.transfer.client.ClientRegisterTransferPacket;
+import eu.koboo.kache.packets.transfer.client.ClientTransferObjectPacket;
+import io.netty.channel.Channel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,13 +86,26 @@ public class KacheServerListener extends EventListener<NativeReceiveEvent> {
                     packet.setMapToResolve(resolveMap);
 
                     event.getChannel().writeAndFlush(packet);
+                }),
+                ccase(ClientRegisterTransferPacket.class, p -> {
+                    Channel channel = event.getChannel();
+                    String transferChannel = p.getChannel();
+                    server.registerTransfer(channel, transferChannel);
+                }),
+                ccase(ClientTransferObjectPacket.class, p -> {
+                    Channel channel = event.getChannel();
+                    String transferChannel = p.getChannel();
+                    byte[] valueBytes = p.getValue();
+                    server.handleObjectTransfer(channel, transferChannel, valueBytes);
                 }));
         long end = System.nanoTime();
-        String cacheName = "{invalid}";
+        String subject = "{invalid}";
         if(event.getTypeObject() instanceof CachePacket) {
-            cacheName = ((CachePacket) event.getTypeObject()).getCacheName();
+            subject = ((CachePacket) event.getTypeObject()).getCacheName();
+        } else if(event.getTypeObject() instanceof TransferPacket) {
+            subject = ((TransferPacket) event.getTypeObject()).getChannel();
         }
-        server.eventHandler().callEvent(new KacheRequestEvent(event.getTypeObject().getClass(), event.getChannel().id().toString(), cacheName, end - start));
+        server.eventHandler().callEvent(new KacheRequestEvent(event.getTypeObject().getClass(), event.getChannel().id().toString(), subject, end - start));
     }
 
     @Override
