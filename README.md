@@ -17,9 +17,9 @@ whereby objects in the cache have to extend the class ``Serializable``!
 
 # Usage
 
-<br>
+</br>
 **All functions are shown here as examples**
-<br>
+</br>
 
 ### Create ``KacheClient``
 ````java
