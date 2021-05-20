@@ -6,9 +6,12 @@ import eu.koboo.endpoint.core.builder.EndpointBuilder;
 import eu.koboo.endpoint.core.builder.param.ErrorMode;
 import eu.koboo.endpoint.core.builder.param.EventMode;
 import eu.koboo.endpoint.core.builder.param.Protocol;
-import eu.koboo.kache.packets.client.*;
-import eu.koboo.kache.packets.server.ServerExistsManyPacket;
-import eu.koboo.kache.packets.server.ServerResolveManyPacket;
+import eu.koboo.kache.packets.cache.client.*;
+import eu.koboo.kache.packets.cache.server.ServerExistsManyPacket;
+import eu.koboo.kache.packets.cache.server.ServerResolveManyPacket;
+import eu.koboo.kache.packets.transfer.client.ClientRegisterTransferPacket;
+import eu.koboo.kache.packets.transfer.client.ClientTransferObjectPacket;
+import eu.koboo.kache.packets.transfer.server.ServerTransferObjectPacket;
 import eu.koboo.nettyutils.Compression;
 import eu.koboo.nettyutils.NettyType;
 
@@ -30,8 +33,11 @@ public class Kache {
             .registerNative(6, ClientPushManyPacket.class)
             .registerNative(8, ClientResolveAllPacket.class)
             .registerNative(9, ClientResolveManyPacket.class)
-            .registerNative(10, ServerExistsManyPacket.class)
-            .registerNative(11, ServerResolveManyPacket.class)
+            .registerNative(10, ClientRegisterTransferPacket.class)
+            .registerNative(11, ClientTransferObjectPacket.class)
+            .registerNative(20, ServerExistsManyPacket.class)
+            .registerNative(21, ServerResolveManyPacket.class)
+            .registerNative(22, ServerTransferObjectPacket.class)
             ;
 
 }

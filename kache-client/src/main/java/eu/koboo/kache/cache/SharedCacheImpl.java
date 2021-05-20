@@ -1,12 +1,11 @@
-package eu.koboo.kache.cache.future;
+package eu.koboo.kache.cache;
 
-import eu.koboo.kache.Kache;
 import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.cache.result.ExistsManyResult;
 import eu.koboo.kache.cache.result.ExistsResult;
 import eu.koboo.kache.cache.result.ResolveManyResult;
 import eu.koboo.kache.cache.result.ResolveResult;
-import eu.koboo.kache.packets.client.*;
+import eu.koboo.kache.packets.cache.client.*;
 import eu.koboo.nettyutils.SharedFutures;
 
 import java.io.Serializable;
@@ -68,7 +67,7 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
             return;
         Map<String, byte[]> cacheMap = new HashMap<>();
         for (Map.Entry<String, V> entry : mapToCache.entrySet()) {
-            byte[] valueBytes = Kache.ENDPOINT_BUILDER.getSerializerPool().serialize(entry.getValue());
+            byte[] valueBytes = client.builder().getSerializerPool().serialize(entry.getValue());
             cacheMap.put(entry.getKey(), valueBytes);
         }
         ClientPushManyPacket packet = new ClientPushManyPacket();
@@ -190,7 +189,7 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
         Map<String, V> serializedMap = new HashMap<>();
         if (resolvedMap != null && !resolvedMap.isEmpty()) {
             for (Map.Entry<String, byte[]> entry : resolvedMap.entrySet()) {
-                V value = (V) Kache.ENDPOINT_BUILDER.getSerializerPool().deserialize(entry.getValue());
+                V value = client.builder().getSerializerPool().deserialize(entry.getValue());
                 serializedMap.put(entry.getKey(), value);
             }
         }

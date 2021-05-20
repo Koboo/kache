@@ -1,20 +1,25 @@
-# Koboo's Cache (Kache)
+# **Koboo's Cache** *(Kache)*
 
-Kache stands for Koboo's Cache and is a minimalistic and lightweight framework 
-for remote and local caches. The network transport was implemented with 
-Endpoint-Netty and is based on client and server. The server caches the data regularly in a 
-ConcurrentHashMap and the client has the possibility to access it via the LocalCache object.
+Kache stands for Koboo's Cache and is a minimalist and lightweight framework for remote or local operations. 
+Kache is based on [Endpoint-Netty](https://github.com/Koboo/endpoint-netty), or rather a regular and conventional TCP client-server communication. 
+<br>
+**Features:**
+* [Server-side cache](#use-sharedcacheobject)
+* [Transfer Channels (Client-To-Server-To-Client)](#use-transferchannelobject)
 
-Note: The transport encoding is based on the Protocol.NATIVE of Endpoint-Netty, 
-but the object serialization is based on the framework fast-serialization, 
-whereby objects in the cache have to extend the class Serializable!
+Note: The transport encoding is based on the ``Protocol.NATIVE`` of [Endpoint-Netty](https://github.com/Koboo/endpoint-netty), 
+but the object serialization is based on the framework [fast-serialization](https://github.com/RuedigerMoeller/fast-serialization), 
+whereby objects in the cache have to extend the class ``Serializable``!
 
 # Important
 
-It's recommend to use this framework only on localhost-running apps to share maps across JVM.
+**It's recommend to use this framework only on localhost-running apps to share maps across JVM.**
 
 # Usage
-Create a new ``KacheClient``:
+  
+**All functions are shown here as examples**  
+
+### Create ``KacheClient``
 ````java
 public class SomeClass {
     
@@ -31,6 +36,7 @@ public class SomeClass {
 }
 ````
 
+### Use ``SharedCache<Object>``
 ````java
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -82,6 +88,42 @@ public class SomeClass {
         Map<String, Object> resolveAllMap = cache.resolveAll().sync();
         CompletableFuture<Map<String, TestObj>> resolveAllMap = cache.resolveAll().future();
         cache.invalidateAll();
+    }
+
+}
+````
+
+### Use ``TransferChannel<Object>``
+````java
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+
+public class SomeClass {
+
+    public static void main(String[] args) {
+        KacheClient client = new KacheClient();
+
+        TestObj object = new TestObj("", 1L, -1); // any object, have to extend Serializable 
+
+        TransferChannel<TestObj> channel = client.getTransfer("channelName"); // any Channel-Name
+
+        // Publish an object to the clients, who registered the specific TransferChannel 
+        channel.publish(object);
+        
+        // Get the name of the TransferChannel 
+        String channelName = channel.getChannel();
+        
+        // Register a Consumer, which if fired by receiving an Object on the TransferChannel
+        channel.receive(obj -> {
+            // Do something with the TestObj
+        });
+        
+        // Stop receiving the Objets of the TransferChannel
+        channel.pause(true);
+
+        // Start receiving the Objets of the TransferChannel
+        channel.pause(false);
+        
     }
 
 }

@@ -1,6 +1,6 @@
 import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.KacheServer;
-import eu.koboo.kache.cache.future.SharedCache;
+import eu.koboo.kache.cache.SharedCache;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
