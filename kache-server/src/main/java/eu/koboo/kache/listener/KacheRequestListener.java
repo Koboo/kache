@@ -16,7 +16,7 @@ public class KacheRequestListener extends EventListener<KacheRequestEvent> {
     public void onEvent(KacheRequestEvent event) {
         serverApp.getConsole().info("Packet{channel=" + event.getChannelId() + ", " +
                 "type=" + event.getPacketClass().getSimpleName().replaceFirst("Client", "").replaceFirst("Packet", "") + ", " +
-                "cache=" + event.getCacheName() + ", " +
+                "subject=" + event.getCacheName() + ", " +
                 "processTime=" + ((double) event.getProcessTime() / 1000000) + "ms}");
     }
 }
