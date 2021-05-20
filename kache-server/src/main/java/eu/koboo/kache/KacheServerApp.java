@@ -33,6 +33,10 @@ public class KacheServerApp {
             kacheServer.stop();
     }
 
+    public KacheServer getServer() {
+        return kacheServer;
+    }
+
     public TerminalConsole getConsole() {
         return console;
     }
