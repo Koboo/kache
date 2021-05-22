@@ -14,6 +14,7 @@ import eu.koboo.kache.packets.transfer.client.ClientTransferObjectPacket;
 import eu.koboo.kache.packets.transfer.server.ServerTransferObjectPacket;
 import eu.koboo.nettyutils.Compression;
 import eu.koboo.nettyutils.NettyType;
+import io.netty.channel.epoll.Epoll;
 
 public class Kache {
 
@@ -24,7 +25,7 @@ public class Kache {
             .eventMode(EventMode.SYNC)
             .errorMode(ErrorMode.STACK_TRACE)
             .serializer(new SerializerPool(FSTSerialization.class))
-            .setDomainSocket(NettyType.prepareType().isEpoll() ? "/tmp/kache.sock" : null)
+            .isUsingUDS("/tmp/kache.sock")
             .registerNative(1, ClientTimeToLivePacket.class)
             .registerNative(2, ClientExistsManyPacket.class)
             .registerNative(3, ClientForceManyPacket.class)
