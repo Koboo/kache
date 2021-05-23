@@ -58,8 +58,7 @@ public class KacheServer extends EndpointServer {
     }
 
     public void clearTransfer(Channel channel) {
-        String id = channel.id().toString();
-        serverChannelRegistry.remove(id);
+        serverChannelRegistry.remove(channel.id().toString());
     }
 
     public List<String> getAllKeys(String name) {
