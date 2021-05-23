@@ -19,14 +19,14 @@ public class CacheMap<K, V> extends ConcurrentHashMap<K, V> {
 
     public CacheMap(long lifeTimeInMillis) {
         this.timeToLive = lifeTimeInMillis;
-        CACHE_TIMER.schedule(new CacheValidation<>(this), 0, TimeUnit.SECONDS.toMillis(30));
+        CACHE_TIMER.scheduleAtFixedRate(new CacheValidation<>(this), 0, 500);
     }
 
-    protected long getTimeToLive() {
+    public long getTimeToLive() {
         return timeToLive;
     }
 
-    protected Map<K, CacheData> getDataMap() {
+    public Map<K, CacheData> getDataMap() {
         return dataMap;
     }
 
@@ -46,8 +46,7 @@ public class CacheMap<K, V> extends ConcurrentHashMap<K, V> {
 
     @Override
     public V put(K key, V value) {
-        dataMap.remove(key);
-        dataMap.put(key, new CacheData(System.currentTimeMillis(), isForced(key)));
+        dataMap.putIfAbsent(key, new CacheData(System.currentTimeMillis(), isForced(key)));
         return super.put(key, value);
     }
 
