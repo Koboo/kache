@@ -128,3 +128,35 @@ public class SomeClass {
 
 }
 ````
+
+# Add as dependency 
+
+
+Add `repo.koboo.eu` as repository.
+
+```groovy
+repositories {
+    maven { 
+        url 'https://repo.koboo.eu/releases' 
+    }
+}
+```
+
+Add a specific module as dependency. (e.g. `1.0` is the release-version)
+```groovy
+dependencies {
+    // !Always needed!
+    compile 'eu.koboo:kache-core:1.0'
+    // Compile the client-side library
+    compile 'eu.koboo:kache-client:1.0'
+    // Compile the server-side library
+    compile 'eu.koboo:kache-server:1.0'
+}
+```
+
+Or you can build the ``kache-server`` by starting the task:
+````bash
+gradle kache-server:build
+````
+
+Output-Directory: ``{project}/kache-server/build/libs/kache.jar``
