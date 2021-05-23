@@ -1,6 +1,6 @@
 # **Koboo's Cache** *(Kache)*
 
-Kache stands for Koboo's Cache and is a minimalist and lightweight framework for remote or local operations. 
+Kache stands for Koboo's Cache and is a minimalist and lightweight framework for remote or local transport operations. 
 Kache is based on [Endpoint-Netty](https://github.com/Koboo/endpoint-netty), or rather a regular and conventional TCP client-server communication. 
 <br>
 **Features:**
@@ -9,11 +9,11 @@ Kache is based on [Endpoint-Netty](https://github.com/Koboo/endpoint-netty), or 
 
 Note: The transport encoding is based on the ``Protocol.NATIVE`` of [Endpoint-Netty](https://github.com/Koboo/endpoint-netty), 
 but the object serialization is based on the framework [fast-serialization](https://github.com/RuedigerMoeller/fast-serialization), 
-whereby objects in the cache have to extend the class ``Serializable``!
+whereby objects have to extend the class ``Serializable``!
 
 # Important
 
-**It's recommend to use this framework only on localhost-running apps to share maps across JVM.**
+**It's recommend to use this framework only on localhost-running apps to share maps across JVM using `UnixDomainSocket`.**
 
 # Usage
   
