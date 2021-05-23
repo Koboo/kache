@@ -1,6 +1,7 @@
 package eu.koboo.kache;
 
 import eu.koboo.endpoint.core.builder.param.ErrorMode;
+import eu.koboo.endpoint.core.events.message.LogEvent;
 import eu.koboo.endpoint.server.EndpointServer;
 import eu.koboo.kache.listener.KacheServerListener;
 import eu.koboo.kache.map.CacheMap;
@@ -33,6 +34,7 @@ public class KacheServer extends EndpointServer {
             channelList.add(transferChannel);
             if(!serverChannelRegistry.containsKey(id))
                 serverChannelRegistry.put(id, channelList);
+            eventHandler().callEvent(new LogEvent(id + " > Registered transfer-channel '" + transferChannel + "'"));
         }
     }
 
@@ -70,8 +72,10 @@ public class KacheServer extends EndpointServer {
     public void push(String name, Map<String, byte[]> mapToCache) {
         name = name.toLowerCase(Locale.ROOT);
         CacheMap<String, byte[]> cacheMap = serverCache.get(name);
-        if (cacheMap == null)
+        if (cacheMap == null) {
             cacheMap = new CacheMap<>(TimeUnit.SECONDS.toMillis(30));
+            eventHandler().callEvent(new LogEvent("Creating new cache-map '" + name + "' (push)"));
+        }
         for (Map.Entry<String, byte[]> entry : mapToCache.entrySet()) {
             cacheMap.put(entry.getKey(), entry.getValue());
         }
@@ -135,7 +139,12 @@ public class KacheServer extends EndpointServer {
     public void cacheTime(String name, long cacheTime) {
         name = name.toLowerCase(Locale.ROOT);
         CacheMap<String, byte[]> cacheMap = serverCache.get(name);
-        if (cacheMap != null) {
+        if(cacheMap == null) {
+            cacheMap = new CacheMap<>(cacheTime);
+            serverCache.put(name, cacheMap);
+            eventHandler().callEvent(new LogEvent("Creating new cache-map '" + name + "' (timeToLive)"));
+        }
+        if(cacheMap.getTimeToLive() != cacheTime) {
             cacheMap.setTimeToLive(cacheTime);
         }
     }
