@@ -14,10 +14,10 @@ public class ResultSyncTest {
 
     @BeforeClass
     public static void before() throws InterruptedException {
-        server = new KacheServer();
+        server = new KacheServer(6565);
         server.start();
 
-        client = new KacheClient();
+        client = new KacheClient("localhost", 6565);
         client.start();
 
         localCache = client.getCache("test_cache");
