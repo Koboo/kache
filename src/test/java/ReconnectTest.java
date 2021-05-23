@@ -19,25 +19,8 @@ public class ReconnectTest {
     }
 
     @Test
-    public void testA() {
-        TestObj testObj = new TestObj("TEst", 1, -1L);
-
-        System.out.println("Exists(before): " + localCache.exists(testObj.getString()).sync());
-
-        localCache.push(testObj.getString(), testObj);
-        System.out.println("Cached!");
-
-        System.out.println("Exists(after): " + localCache.exists(testObj.getString()).sync());
-
-        testObj = localCache.resolve(testObj.getString()).sync();
-        System.out.println("Resolved!");
-
-        System.out.println("Obj: " + (testObj != null ? testObj.toString() : "NULL"));
-
-        localCache.invalidate(testObj.getString());
-        System.out.println("Invalidated!");
-
-        System.out.println("Exists(invalid): " + localCache.exists(testObj.getString()).sync());
+    public void testA() throws InterruptedException {
+        Thread.sleep(1000L * 60);
     }
 
     @AfterClass
