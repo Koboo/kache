@@ -77,6 +77,7 @@ public class KacheServer extends EndpointServer {
             eventHandler().callEvent(new LogEvent("Creating new cache-map '" + name + "' (push)"));
         }
         for (Map.Entry<String, byte[]> entry : mapToCache.entrySet()) {
+            cacheMap.remove(entry.getKey());
             cacheMap.put(entry.getKey(), entry.getValue());
         }
         if (!serverCache.containsKey(name))
