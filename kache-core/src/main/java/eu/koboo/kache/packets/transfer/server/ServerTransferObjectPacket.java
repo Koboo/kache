@@ -1,7 +1,7 @@
 package eu.koboo.kache.packets.transfer.server;
 
+import eu.koboo.endpoint.core.util.BufUtils;
 import eu.koboo.kache.packets.transfer.TransferPacket;
-import eu.koboo.nettyutils.BufUtils;
 import io.netty.buffer.ByteBuf;
 
 public class ServerTransferObjectPacket extends TransferPacket {

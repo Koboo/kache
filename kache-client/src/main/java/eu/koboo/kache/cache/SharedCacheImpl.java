@@ -1,12 +1,12 @@
 package eu.koboo.kache.cache;
 
+import eu.koboo.endpoint.core.util.SharedFutures;
 import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.cache.result.ExistsManyResult;
 import eu.koboo.kache.cache.result.ExistsResult;
 import eu.koboo.kache.cache.result.ResolveManyResult;
 import eu.koboo.kache.cache.result.ResolveResult;
 import eu.koboo.kache.packets.cache.client.*;
-import eu.koboo.nettyutils.SharedFutures;
 
 import java.io.Serializable;
 import java.util.*;
@@ -39,7 +39,7 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
             packet.setFutureId(futureEntry.getKey());
             packet.setCacheName(cacheName);
             packet.setListToContains(listToExists);
-            client.send(packet, false);
+            client.send(packet);
         } catch (Exception e) {
             client.onException(getClass(), e);
             future.complete(new HashMap<>());
@@ -67,13 +67,13 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
             return;
         Map<String, byte[]> cacheMap = new HashMap<>();
         for (Map.Entry<String, V> entry : mapToCache.entrySet()) {
-            byte[] valueBytes = client.builder().getSerializerPool().serialize(entry.getValue());
+            byte[] valueBytes = client.getSerializerPool().serialize(entry.getValue());
             cacheMap.put(entry.getKey(), valueBytes);
         }
         ClientPushManyPacket packet = new ClientPushManyPacket();
         packet.setCacheName(cacheName);
         packet.setMapToCache(cacheMap);
-        client.send(packet, false);
+        client.send(packet);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
         ClientInvalidateManyPacket packet = new ClientInvalidateManyPacket();
         packet.setCacheName(cacheName);
         packet.setListToInvalidate(listToInvalidate);
-        client.send(packet, false);
+        client.send(packet);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
     public void invalidateAll() {
         ClientInvalidateAllPacket packet = new ClientInvalidateAllPacket();
         packet.setCacheName(cacheName);
-        client.send(packet, false);
+        client.send(packet);
     }
 
     private CompletableFuture<Map<String, V>> resolveFuture(List<String> listToResolve) {
@@ -119,7 +119,7 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
             packet.setFutureId(futureEntry.getKey());
             packet.setCacheName(cacheName);
             packet.setListToResolve(listToResolve);
-            client.send(packet, false);
+            client.send(packet);
             return future;
         } catch (Exception e) {
             client.onException(getClass(), e);
@@ -150,7 +150,7 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
             ClientResolveAllPacket packet = new ClientResolveAllPacket();
             packet.setFutureId(futureEntry.getKey());
             packet.setCacheName(cacheName);
-            client.send(packet, false);
+            client.send(packet);
         } catch (Exception e) {
             client.onException(getClass(), e);
             future.complete(new HashMap<>());
@@ -165,7 +165,7 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
         ClientForceManyPacket packet = new ClientForceManyPacket();
         packet.setCacheName(cacheName);
         packet.setForceMap(mapToForce);
-        client.send(packet, false);
+        client.send(packet);
     }
 
     @Override
@@ -180,7 +180,7 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
         ClientTimeToLivePacket packet = new ClientTimeToLivePacket();
         packet.setCacheName(cacheName);
         packet.setCacheTimeMillis(timeToLive);
-        client.send(packet, false);
+        client.send(packet);
     }
 
     public void completeResolveFuture(String futureId, Map<String, byte[]> resolvedMap) {
@@ -189,7 +189,7 @@ public class SharedCacheImpl<V extends Serializable> implements SharedCache<V> {
         Map<String, V> serializedMap = new HashMap<>();
         if (resolvedMap != null && !resolvedMap.isEmpty()) {
             for (Map.Entry<String, byte[]> entry : resolvedMap.entrySet()) {
-                V value = client.builder().getSerializerPool().deserialize(entry.getValue());
+                V value = client.getSerializerPool().deserialize(entry.getValue());
                 serializedMap.put(entry.getKey(), value);
             }
         }

@@ -47,7 +47,7 @@ public class SomeClass {
         KacheClient client = new KacheClient();
 
         String key = "key"; // any key
-        TestObj object = new TestObj("", 1L, -1); // any object, have to extend Serializable 
+        NetworkObj object = new NetworkObj("", 1L, -1); // any object, have to extend Serializable 
 
         SharedCache<Object> cache = client.getCache("object_cache");
 
@@ -63,13 +63,13 @@ public class SomeClass {
         cache.invalidate(key);
 
         // Get from cache and sync the future
-        TestObj objfromCache = cache.resolve(key).sync();
+        NetworkObj objfromCache = cache.resolve(key).sync();
         // Or do something with the CompletableFuture
-        CompletableFuture<TestObj> future = cache.resolve(key).future();
+        CompletableFuture<NetworkObj> future = cache.resolve(key).future();
 
         // All methods are also available with keyword "Many"
 
-        Map<String, TestObj> toCache = new HashMap<>();
+        Map<String, NetworkObj> toCache = new HashMap<>();
         cache.pushMany(toCache);
         
         
@@ -80,13 +80,13 @@ public class SomeClass {
         Map<String, Boolean> existsMap = cache.existsMany(keyList).sync();
         CompletableFuture<Map<String, Boolean>> futureMap = cache.existsMany(keyList).future();
         
-        Map<String, TestObj> resolveMap = cache.resolveMany(keyList).sync();
-        CompletableFuture<Map<String, TestObj>> future = cache.resolveMany(keyList).future();
+        Map<String, NetworkObj> resolveMap = cache.resolveMany(keyList).sync();
+        CompletableFuture<Map<String, NetworkObj>> future = cache.resolveMany(keyList).future();
         
         // Special methods:
 
         Map<String, Object> resolveAllMap = cache.resolveAll().sync();
-        CompletableFuture<Map<String, TestObj>> resolveAllMap = cache.resolveAll().future();
+        CompletableFuture<Map<String, NetworkObj>> resolveAllMap = cache.resolveAll().future();
         cache.invalidateAll();
     }
 
@@ -103,9 +103,9 @@ public class SomeClass {
     public static void main(String[] args) {
         KacheClient client = new KacheClient();
 
-        TestObj object = new TestObj("", 1L, -1); // any object, have to extend Serializable 
+        NetworkObj object = new NetworkObj("", 1L, -1); // any object, have to extend Serializable 
 
-        TransferChannel<TestObj> channel = client.getTransfer("channelName"); // any Channel-Name
+        TransferChannel<NetworkObj> channel = client.getTransfer("channelName"); // any Channel-Name
 
         // Publish an object to the clients, who registered the specific TransferChannel 
         channel.publish(object);
@@ -115,7 +115,7 @@ public class SomeClass {
         
         // Register a Consumer, which if fired by receiving an Object on the TransferChannel
         channel.receive(obj -> {
-            // Do something with the TestObj
+            // Do something with the NetworkObj
         });
         
         // Stop receiving the Objets of the TransferChannel

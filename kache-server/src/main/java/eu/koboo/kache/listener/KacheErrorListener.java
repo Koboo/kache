@@ -1,10 +1,11 @@
 package eu.koboo.kache.listener;
 
 import eu.koboo.endpoint.core.events.message.ErrorEvent;
-import eu.koboo.event.listener.EventListener;
 import eu.koboo.kache.KacheServerApp;
 
-public class KacheErrorListener extends EventListener<ErrorEvent>{
+import java.util.function.Consumer;
+
+public class KacheErrorListener implements Consumer<ErrorEvent> {
 
     final KacheServerApp serverApp;
 
@@ -13,7 +14,8 @@ public class KacheErrorListener extends EventListener<ErrorEvent>{
     }
 
     @Override
-    public void onEvent(ErrorEvent errorEvent) {
+    public void accept(ErrorEvent errorEvent) {
         serverApp.getConsole().error("Error thrown in class '" + errorEvent.getClazz().getSimpleName() + "'.", errorEvent.getThrowable());
     }
+
 }

@@ -1,8 +1,8 @@
 package eu.koboo.kache.packets.cache;
 
-import eu.koboo.endpoint.core.protocols.natives.NativePacket;
+import eu.koboo.endpoint.core.codec.EndpointPacket;
 
-public abstract class CachePacket implements NativePacket {
+public abstract class CachePacket implements EndpointPacket {
 
     protected String cacheName;
 

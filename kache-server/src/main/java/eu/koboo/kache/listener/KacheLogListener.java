@@ -1,10 +1,11 @@
 package eu.koboo.kache.listener;
 
 import eu.koboo.endpoint.core.events.message.LogEvent;
-import eu.koboo.event.listener.EventListener;
 import eu.koboo.kache.KacheServerApp;
 
-public class KacheLogListener extends EventListener<LogEvent> {
+import java.util.function.Consumer;
+
+public class KacheLogListener implements Consumer<LogEvent> {
 
     private final KacheServerApp serverApp;
 
@@ -13,7 +14,8 @@ public class KacheLogListener extends EventListener<LogEvent> {
     }
 
     @Override
-    public void onEvent(LogEvent logEvent) {
+    public void accept(LogEvent logEvent) {
         serverApp.getConsole().info(logEvent.getMessage());
     }
+
 }

@@ -1,10 +1,11 @@
 package eu.koboo.kache.listener;
 
-import eu.koboo.event.listener.EventListener;
 import eu.koboo.kache.KacheServerApp;
 import eu.koboo.kache.events.KacheRequestEvent;
 
-public class KacheRequestListener extends EventListener<KacheRequestEvent> {
+import java.util.function.Consumer;
+
+public class KacheRequestListener implements Consumer<KacheRequestEvent> {
 
     final KacheServerApp serverApp;
 
@@ -13,7 +14,7 @@ public class KacheRequestListener extends EventListener<KacheRequestEvent> {
     }
 
     @Override
-    public void onEvent(KacheRequestEvent event) {
+    public void accept(KacheRequestEvent event) {
         serverApp.getConsole().info("Packet{channel=" + event.getChannelId() + ", " +
                 "type=" + event.getPacketClass().getSimpleName().replaceFirst("Client", "").replaceFirst("Packet", "") + ", " +
                 "subject=" + event.getCacheName() + ", " +

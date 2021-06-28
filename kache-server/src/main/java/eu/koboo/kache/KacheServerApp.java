@@ -1,12 +1,15 @@
 package eu.koboo.kache;
 
+import eu.koboo.endpoint.core.events.channel.ChannelActionEvent;
+import eu.koboo.endpoint.core.events.message.ErrorEvent;
 import eu.koboo.endpoint.core.events.message.LogEvent;
+import eu.koboo.kache.events.KacheRequestEvent;
 import eu.koboo.kache.listener.KacheActionListener;
 import eu.koboo.kache.listener.KacheErrorListener;
 import eu.koboo.kache.listener.KacheLogListener;
 import eu.koboo.kache.listener.KacheRequestListener;
-import eu.koboo.terminal.TerminalConsole;
 import eu.koboo.terminal.ConsoleBuilder;
+import eu.koboo.terminal.TerminalConsole;
 
 public class KacheServerApp {
 
@@ -19,10 +22,10 @@ public class KacheServerApp {
                 .setConsoleName("kache-server")
                 .build();
         this.kacheServer = new KacheServer();
-        this.kacheServer.eventHandler().register(new KacheActionListener(this));
-        this.kacheServer.eventHandler().register(new KacheRequestListener(this));
-        this.kacheServer.eventHandler().register(new KacheErrorListener(this));
-        this.kacheServer.eventHandler().register(new KacheLogListener(this));
+        this.kacheServer.registerEvent(ChannelActionEvent.class, new KacheActionListener(this));
+        this.kacheServer.registerEvent(KacheRequestEvent.class, new KacheRequestListener(this));
+        this.kacheServer.registerEvent(ErrorEvent.class, new KacheErrorListener(this));
+        this.kacheServer.registerEvent(LogEvent.class, new KacheLogListener(this));
     }
 
     void start() {

@@ -1,5 +1,4 @@
 import eu.koboo.kache.KacheClient;
-import eu.koboo.kache.KacheServer;
 import eu.koboo.kache.cache.SharedCache;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -11,7 +10,7 @@ public class TimeToLiveTest {
 
     static KacheClient client;
 
-    static SharedCache<TestObj> localCache;
+    static SharedCache<NetworkObj> localCache;
 
     @BeforeClass
     public static void before() throws InterruptedException {
@@ -25,18 +24,18 @@ public class TimeToLiveTest {
 
     @Test
     public void testA() throws InterruptedException {
-        TestObj testObj = new TestObj("TEst", 1, -1L);
+        NetworkObj networkObj = new NetworkObj("TEst", 1, -1L);
 
-        System.out.println("Exists(before): " + localCache.exists(testObj.getString()).sync());
+        System.out.println("Exists(before): " + localCache.exists(networkObj.getTestString()).sync());
 
-        localCache.push(testObj.getString(), testObj);
+        localCache.push(networkObj.getTestString(), networkObj);
         System.out.println("Cached!");
 
-        System.out.println("Exists(after): " + localCache.exists(testObj.getString()).sync());
+        System.out.println("Exists(after): " + localCache.exists(networkObj.getTestString()).sync());
 
         Thread.sleep(5_000);
 
-        System.out.println("Exists(sleep): " + localCache.exists(testObj.getString()).sync());
+        System.out.println("Exists(sleep): " + localCache.exists(networkObj.getTestString()).sync());
     }
 
     @AfterClass

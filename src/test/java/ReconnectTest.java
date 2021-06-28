@@ -8,7 +8,7 @@ public class ReconnectTest {
 
     static KacheClient client;
 
-    static SharedCache<TestObj> localCache;
+    static SharedCache<NetworkObj> localCache;
 
     @BeforeClass
     public static void before() {

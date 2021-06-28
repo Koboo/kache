@@ -14,7 +14,7 @@ public class TransferChannelTest {
     static KacheClient client;
     static List<KacheClient> clientList;
 
-    static TransferChannel<TestObj> transfer;
+    static TransferChannel<NetworkObj> transfer;
 
     @BeforeClass
     public static void before() throws InterruptedException {
@@ -25,8 +25,8 @@ public class TransferChannelTest {
         for(int i = 0; i < 3; i++) {
             KacheClient receiveClient = new KacheClient("localhost", 6565);
             receiveClient.start();
-            TransferChannel<TestObj> channel = receiveClient.getTransfer("test_transfer");
-            channel.receive(obj -> System.out.println(obj.getString() + "/" + obj.getInte() + "/" + obj.getLon()));
+            TransferChannel<NetworkObj> channel = receiveClient.getTransfer("test_transfer");
+            channel.receive(obj -> System.out.println(obj.getTestString() + "/" + obj.getTestInt() + "/" + obj.getTestLong()));
             clientList.add(receiveClient);
             Thread.sleep(50L);
         }
@@ -39,8 +39,8 @@ public class TransferChannelTest {
 
     @Test
     public void testA() throws InterruptedException {
-        TestObj testObj = new TestObj("TEst", 1, -1L);
-        transfer.publish(testObj);
+        NetworkObj networkObj = new NetworkObj("TEst", 1, -1L);
+        transfer.publish(networkObj);
 
         Thread.sleep(5_000L);
     }

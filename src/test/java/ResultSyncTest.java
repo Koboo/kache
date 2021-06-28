@@ -10,7 +10,7 @@ public class ResultSyncTest {
     static KacheServer server;
     static KacheClient client;
 
-    static SharedCache<TestObj> localCache;
+    static SharedCache<NetworkObj> localCache;
 
     @BeforeClass
     public static void before() throws InterruptedException {
@@ -25,24 +25,24 @@ public class ResultSyncTest {
 
     @Test
     public void testA() throws InterruptedException {
-        TestObj testObj = new TestObj("TEst", 1, -1L);
+        NetworkObj networkObj = new NetworkObj("TEst", 1, -1L);
 
-        System.out.println("Exists(before): " + localCache.exists(testObj.getString()).sync());
+        System.out.println("Exists(before): " + localCache.exists(networkObj.getTestString()).sync());
 
-        localCache.push(testObj.getString(), testObj);
+        localCache.push(networkObj.getTestString(), networkObj);
         System.out.println("Cached!");
 
-        System.out.println("Exists(after): " + localCache.exists(testObj.getString()).sync());
+        System.out.println("Exists(after): " + localCache.exists(networkObj.getTestString()).sync());
 
-        testObj = localCache.resolve(testObj.getString()).sync();
+        networkObj = localCache.resolve(networkObj.getTestString()).sync();
         System.out.println("Resolved!");
 
-        System.out.println("Obj: " + (testObj != null ? testObj.toString() : "NULL"));
+        System.out.println("Obj: " + (networkObj != null ? networkObj.toString() : "NULL"));
 
-        localCache.invalidate(testObj.getString());
+        localCache.invalidate(networkObj.getTestString());
         System.out.println("Invalidated!");
 
-        System.out.println("Exists(invalid): " + localCache.exists(testObj.getString()).sync());
+        System.out.println("Exists(invalid): " + localCache.exists(networkObj.getTestString()).sync());
     }
 
     @AfterClass

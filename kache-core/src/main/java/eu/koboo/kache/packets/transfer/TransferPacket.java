@@ -1,8 +1,8 @@
 package eu.koboo.kache.packets.transfer;
 
-import eu.koboo.endpoint.core.protocols.natives.NativePacket;
+import eu.koboo.endpoint.core.codec.EndpointPacket;
 
-public abstract class TransferPacket implements NativePacket {
+public abstract class TransferPacket implements EndpointPacket {
 
     protected String channel;
 

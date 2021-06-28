@@ -1,23 +1,23 @@
 package eu.koboo.kache.events;
 
-import eu.koboo.endpoint.core.protocols.natives.NativePacket;
-import eu.koboo.event.CallableEvent;
+import eu.koboo.endpoint.core.codec.EndpointPacket;
+import eu.koboo.endpoint.core.events.ConsumerEvent;
 
-public class KacheRequestEvent implements CallableEvent {
+public class KacheRequestEvent implements ConsumerEvent {
 
-    final Class<? extends NativePacket> packetClass;
+    final Class<? extends EndpointPacket> packetClass;
     final String channelId;
     final String cacheName;
     final long processTime;
 
-    public KacheRequestEvent(Class<? extends NativePacket> packetClass, String channelId, String cacheName, long processTime) {
+    public KacheRequestEvent(Class<? extends EndpointPacket> packetClass, String channelId, String cacheName, long processTime) {
         this.packetClass = packetClass;
         this.channelId = channelId;
         this.cacheName = cacheName;
         this.processTime = processTime;
     }
 
-    public Class<? extends NativePacket> getPacketClass() {
+    public Class<? extends EndpointPacket> getPacketClass() {
         return packetClass;
     }
 

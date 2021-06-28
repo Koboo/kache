@@ -1,6 +1,9 @@
 package eu.koboo.kache;
 
+import eu.binflux.serial.core.SerializerPool;
+import eu.binflux.serial.fst.FSTSerialization;
 import eu.koboo.endpoint.client.EndpointClient;
+import eu.koboo.endpoint.core.events.ReceiveEvent;
 import eu.koboo.kache.cache.SharedCache;
 import eu.koboo.kache.cache.SharedCacheImpl;
 import eu.koboo.kache.channel.TransferChannel;
@@ -16,6 +19,7 @@ public class KacheClient extends EndpointClient {
 
     private final Map<String, SharedCache<?>> sharedCacheMap = new ConcurrentHashMap<>();
     private final Map<String, TransferChannel<?>> transferChannelMap = new ConcurrentHashMap<>();
+    private final SerializerPool serializerPool;
 
     public KacheClient() {
         this(null, -1);
@@ -23,7 +27,12 @@ public class KacheClient extends EndpointClient {
 
     public KacheClient(String host, int port) {
         super(Kache.ENDPOINT_BUILDER, host, port);
-        eventHandler().register(new KacheClientListener(this));
+        registerEvent(ReceiveEvent.class, new KacheClientListener(this));
+        this.serializerPool = new SerializerPool(FSTSerialization.class);
+    }
+
+    public SerializerPool getSerializerPool() {
+        return serializerPool;
     }
 
     public <C extends SharedCache<V>, V extends Serializable> C getCache(String name) {

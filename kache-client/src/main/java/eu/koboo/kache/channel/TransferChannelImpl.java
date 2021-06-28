@@ -23,7 +23,7 @@ public class TransferChannelImpl<V extends Serializable> implements TransferChan
         this.fireReceive = true;
         ClientRegisterTransferPacket packet = new ClientRegisterTransferPacket();
         packet.setChannel(channel);
-        client.send(packet, false);
+        client.send(packet);
     }
 
     @Override
@@ -33,11 +33,11 @@ public class TransferChannelImpl<V extends Serializable> implements TransferChan
 
     @Override
     public TransferChannel<V> publish(V value) {
-        byte[] valueBytes = client.builder().getSerializerPool().serialize(value);
+        byte[] valueBytes = client.getSerializerPool().serialize(value);
         ClientTransferObjectPacket packet = new ClientTransferObjectPacket();
         packet.setChannel(channel);
         packet.setValue(valueBytes);
-        client.send(packet, false);
+        client.send(packet);
         return this;
     }
 
@@ -55,11 +55,10 @@ public class TransferChannelImpl<V extends Serializable> implements TransferChan
 
     public void onReceive(byte[] object) {
         if(consumerList != null && !consumerList.isEmpty() && fireReceive) {
-            V value = client.builder().getSerializerPool().deserialize(object);
+            V value = client.getSerializerPool().deserialize(object);
             for(Consumer<V> consumer : consumerList) {
                 consumer.accept(value);
             }
         }
-
     }
 }

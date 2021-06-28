@@ -1,13 +1,15 @@
 package eu.koboo.kache;
 
 import eu.koboo.endpoint.core.builder.param.ErrorMode;
+import eu.koboo.endpoint.core.events.ReceiveEvent;
 import eu.koboo.endpoint.core.events.message.LogEvent;
 import eu.koboo.endpoint.server.EndpointServer;
 import eu.koboo.kache.listener.KacheServerListener;
 import eu.koboo.kache.map.CacheMap;
+import eu.koboo.kache.packets.cache.client.ClientForceManyPacket;
 import eu.koboo.kache.packets.transfer.server.ServerTransferObjectPacket;
-import eu.koboo.nettyutils.NettyType;
 import io.netty.channel.Channel;
+import io.netty.channel.epoll.Epoll;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,12 +21,12 @@ public class KacheServer extends EndpointServer {
     private final Map<String, List<String>> serverChannelRegistry = new ConcurrentHashMap<>();
 
     public KacheServer() {
-        this(!NettyType.prepareType().isEpoll() ? 6565 : -1);
+        this(!Epoll.isAvailable() ? 6565 : -1);
     }
 
     public KacheServer(int port) {
         super(Kache.ENDPOINT_BUILDER.errorMode(ErrorMode.EVENT), port);
-        eventHandler().register(new KacheServerListener(this));
+        registerEvent(ReceiveEvent.class, new KacheServerListener(this));
     }
 
     public void registerTransfer(Channel channel, String transferChannel) {
@@ -34,7 +36,7 @@ public class KacheServer extends EndpointServer {
             channelList.add(transferChannel);
             if(!serverChannelRegistry.containsKey(id))
                 serverChannelRegistry.put(id, channelList);
-            eventHandler().callEvent(new LogEvent(id + " > Registered transfer-channel '" + transferChannel + "'"));
+            fireEvent(new LogEvent(id + " > Registered transfer-channel '" + transferChannel + "'"));
         }
     }
 
@@ -74,7 +76,7 @@ public class KacheServer extends EndpointServer {
         CacheMap<String, byte[]> cacheMap = serverCache.get(name);
         if (cacheMap == null) {
             cacheMap = new CacheMap<>(TimeUnit.SECONDS.toMillis(30));
-            eventHandler().callEvent(new LogEvent("Creating new cache-map '" + name + "' (push)"));
+            fireEvent(new LogEvent("Creating new cache-map '" + name + "' (push)"));
         }
         for (Map.Entry<String, byte[]> entry : mapToCache.entrySet()) {
             cacheMap.remove(entry.getKey());
@@ -125,13 +127,13 @@ public class KacheServer extends EndpointServer {
         return resolveMap;
     }
 
-    public void force(String name, Map<String, Boolean> listToForce) {
-        name = name.toLowerCase(Locale.ROOT);
+    public void force(ClientForceManyPacket packet) {
+        String name = packet.getCacheName().toLowerCase(Locale.ROOT);
         CacheMap<String, byte[]> cacheMap = serverCache.get(name);
         if (cacheMap != null) {
-            for (String key : listToForce.keySet()) {
+            for (String key : packet.getForceMap().keySet()) {
                 if (cacheMap.containsKey(key)) {
-                    cacheMap.setForced(key, listToForce.get(key));
+                    cacheMap.setForced(key, packet.getForceMap().get(key));
                 }
             }
         }
@@ -143,7 +145,7 @@ public class KacheServer extends EndpointServer {
         if(cacheMap == null) {
             cacheMap = new CacheMap<>(cacheTime);
             serverCache.put(name, cacheMap);
-            eventHandler().callEvent(new LogEvent("Creating new cache-map '" + name + "' (timeToLive)"));
+            fireEvent(new LogEvent("Creating new cache-map '" + name + "' (timeToLive)"));
         }
         if(cacheMap.getTimeToLive() != cacheTime) {
             cacheMap.setTimeToLive(cacheTime);

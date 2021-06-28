@@ -1,7 +1,7 @@
 package eu.koboo.kache.packets.cache.client;
 
+import eu.koboo.endpoint.core.util.BufUtils;
 import eu.koboo.kache.packets.cache.CachePacket;
-import eu.koboo.nettyutils.BufUtils;
 import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;

@@ -10,7 +10,7 @@ public class ResultFutureTest {
     static KacheServer server;
     static KacheClient client;
 
-    static SharedCache<TestObj> sharedCache;
+    static SharedCache<NetworkObj> sharedCache;
 
     @BeforeClass
     public static void before() throws InterruptedException {
@@ -25,27 +25,27 @@ public class ResultFutureTest {
 
     @Test
     public void testA() throws InterruptedException {
-        TestObj testObj = new TestObj("TEst", 1, -1L);
+        NetworkObj networkObj = new NetworkObj("TEst", 1, -1L);
 
-        sharedCache.exists(testObj.getString()).future().whenComplete((ex, e) -> System.out.println("Exists(before): " + ex));
+        sharedCache.exists(networkObj.getTestString()).future().whenComplete((ex, e) -> System.out.println("Exists(before): " + ex));
 
         Thread.sleep(800);
 
-        sharedCache.push(testObj.getString(), testObj);
+        sharedCache.push(networkObj.getTestString(), networkObj);
         System.out.println("Cached!");
 
-        sharedCache.exists(testObj.getString()).future().whenComplete((ex, e) -> System.out.println("Exists(after): " + ex));
+        sharedCache.exists(networkObj.getTestString()).future().whenComplete((ex, e) -> System.out.println("Exists(after): " + ex));
 
         Thread.sleep(800);
 
-        sharedCache.resolve(testObj.getString()).future().whenComplete((obj, e) -> System.out.println("Resolved"));
+        sharedCache.resolve(networkObj.getTestString()).future().whenComplete((obj, e) -> System.out.println("Resolved"));
 
         Thread.sleep(800);
 
-        sharedCache.invalidate(testObj.getString());
+        sharedCache.invalidate(networkObj.getTestString());
         System.out.println("Invalidated!");
 
-        sharedCache.exists(testObj.getString()).future().whenComplete((ex, e) -> System.out.println("Exists(invalid): " + ex));
+        sharedCache.exists(networkObj.getTestString()).future().whenComplete((ex, e) -> System.out.println("Exists(invalid): " + ex));
 
         Thread.sleep(800);
     }
