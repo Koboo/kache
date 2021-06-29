@@ -8,14 +8,14 @@ public class ReconnectTest {
 
     static KacheClient client;
 
-    static SharedCache<NetworkObj> localCache;
+    static SharedCache<TransferObject> localCache;
 
     @BeforeClass
     public static void before() {
         client = new KacheClient("localhost", 6565);
         client.start();
 
-        client.getEncoder().register(1, NetworkObj::new);
+        client.getTransferCodec().register(1, TransferObject::new);
 
         localCache = client.getCache("test_cache");
     }

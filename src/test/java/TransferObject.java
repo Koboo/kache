@@ -1,9 +1,9 @@
-import eu.koboo.endpoint.networkable.Networkable;
+import eu.koboo.endpoint.transferable.Transferable;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-public class NetworkObj implements Networkable {
+public class TransferObject implements Transferable {
 
     private String testString;
     private int testInt;

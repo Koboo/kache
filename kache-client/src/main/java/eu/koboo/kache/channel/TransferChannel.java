@@ -1,6 +1,6 @@
 package eu.koboo.kache.channel;
 
-import eu.koboo.endpoint.networkable.Networkable;
+import eu.koboo.endpoint.transferable.Transferable;
 import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.packets.transfer.client.ClientRegisterTransferPacket;
 import eu.koboo.kache.packets.transfer.client.ClientTransferObjectPacket;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class TransferChannel<V extends Networkable> {
+public class TransferChannel<V extends Transferable> {
 
     private final KacheClient client;
     private final String channel;
@@ -23,7 +23,7 @@ public class TransferChannel<V extends Networkable> {
         this.fireReceive = true;
         ClientRegisterTransferPacket packet = new ClientRegisterTransferPacket();
         packet.setChannel(channel);
-        client.send(packet).syncUninterruptibly();
+        client.send(packet);
     }
 
     public String getChannelName() {
@@ -31,7 +31,7 @@ public class TransferChannel<V extends Networkable> {
     }
 
     public TransferChannel<V> publish(V value) {
-        byte[] valueBytes = client.getEncoder().encode(value);
+        byte[] valueBytes = client.getTransferCodec().encode(value);
         ClientTransferObjectPacket packet = new ClientTransferObjectPacket();
         packet.setChannel(channel);
         packet.setValue(valueBytes);
@@ -56,7 +56,7 @@ public class TransferChannel<V extends Networkable> {
 
     public void onReceive(byte[] object) {
         if(consumerList != null && !consumerList.isEmpty() && fireReceive) {
-            V value = client.getEncoder().decode(object);
+            V value = client.getTransferCodec().decode(object);
             for(Consumer<V> consumer : consumerList) {
                 consumer.accept(value);
             }

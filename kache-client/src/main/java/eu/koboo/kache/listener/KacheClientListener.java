@@ -2,7 +2,7 @@ package eu.koboo.kache.listener;
 
 import eu.koboo.endpoint.core.events.ReceiveEvent;
 import eu.koboo.endpoint.core.util.SharedFutures;
-import eu.koboo.endpoint.networkable.Networkable;
+import eu.koboo.endpoint.transferable.Transferable;
 import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.channel.TransferChannel;
 import eu.koboo.kache.packets.cache.server.ServerExistsManyPacket;
@@ -31,10 +31,10 @@ public class KacheClientListener implements Consumer<ReceiveEvent> {
                 ccase(ServerResolveManyPacket.class, p -> {
                     String futureId = p.getFutureId();
                     CompletableFuture<Map<String, ?>> future = SharedFutures.getFuture(futureId);
-                    Map<String, Networkable> serializedMap = new HashMap<>();
+                    Map<String, Transferable> serializedMap = new HashMap<>();
                     if (p.getMapToResolve() != null && !p.getMapToResolve().isEmpty()) {
                         for (Map.Entry<String, byte[]> entry : p.getMapToResolve().entrySet()) {
-                            Networkable value = client.getEncoder().decode(entry.getValue());
+                            Transferable value = client.getTransferCodec().decode(entry.getValue());
                             serializedMap.put(entry.getKey(), value);
                         }
                     }

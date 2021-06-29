@@ -1,7 +1,7 @@
 package eu.koboo.kache.cache;
 
 import eu.koboo.endpoint.core.util.SharedFutures;
-import eu.koboo.endpoint.networkable.Networkable;
+import eu.koboo.endpoint.transferable.Transferable;
 import eu.koboo.kache.KacheClient;
 import eu.koboo.kache.cache.result.ExistsManyResult;
 import eu.koboo.kache.cache.result.ExistsResult;
@@ -12,7 +12,7 @@ import eu.koboo.kache.packets.cache.client.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class SharedCache<V extends Networkable> {
+public class SharedCache<V extends Transferable> {
 
     final String cacheName;
     final KacheClient client;
@@ -43,7 +43,7 @@ public class SharedCache<V extends Networkable> {
             return;
         Map<String, byte[]> cacheMap = new HashMap<>();
         for (Map.Entry<String, V> entry : mapToCache.entrySet()) {
-            byte[] valueBytes = client.getEncoder().encode(entry.getValue());
+            byte[] valueBytes = client.getTransferCodec().encode(entry.getValue());
             cacheMap.put(entry.getKey(), valueBytes);
         }
         ClientPushManyPacket packet = new ClientPushManyPacket();

@@ -15,7 +15,7 @@ public class ResultSyncTest {
     static KacheServer server;
     static KacheClient client;
 
-    static SharedCache<NetworkObj> localCache;
+    static SharedCache<TransferObject> localCache;
 
     static Consumer<LogEvent> consumer = e -> System.out.println(e.getMessage());
 
@@ -29,47 +29,47 @@ public class ResultSyncTest {
         client.registerEvent(LogEvent.class, consumer);
         client.start();
 
-        client.getEncoder().register(1, NetworkObj::new);
+        client.getTransferCodec().register(1, TransferObject::new);
 
         localCache = client.getCache("test_cache");
     }
 
     @Test
     public void testA() throws InterruptedException {
-        NetworkObj networkObj = new NetworkObj();
-        networkObj.setTestString("Bla");
-        networkObj.setTestInt(1);
-        networkObj.setTestLong(-1L);
+        TransferObject transferObject = new TransferObject();
+        transferObject.setTestString("Bla");
+        transferObject.setTestInt(1);
+        transferObject.setTestLong(-1L);
 
-        System.out.println("Exists(before): " + localCache.exists(networkObj.getTestString()).sync());
+        System.out.println("Exists(before): " + localCache.exists(transferObject.getTestString()).sync());
 
         Thread.sleep(500);
 
-        localCache.push(networkObj.getTestString(), networkObj);
+        localCache.push(transferObject.getTestString(), transferObject);
         System.out.println("Pushed!");
 
         Thread.sleep(500);
 
-        System.out.println("Exists(after): " + localCache.exists(networkObj.getTestString()).sync());
+        System.out.println("Exists(after): " + localCache.exists(transferObject.getTestString()).sync());
 
         Thread.sleep(500);
 
-        networkObj = localCache.resolve(networkObj.getTestString()).sync();
+        transferObject = localCache.resolve(transferObject.getTestString()).sync();
         System.out.println("Resolved!");
 
-        System.out.println("Result: " + (networkObj != null ? networkObj.toString() : "NULL"));
+        System.out.println("Result: " + (transferObject != null ? transferObject.toString() : "NULL"));
 
         Thread.sleep(500);
 
-        assertNotNull(networkObj);
-        assertNotNull(networkObj.getTestString());
+        assertNotNull(transferObject);
+        assertNotNull(transferObject.getTestString());
 
-        localCache.invalidate(networkObj.getTestString());
+        localCache.invalidate(transferObject.getTestString());
         System.out.println("Invalidated!");
 
         Thread.sleep(500);
 
-        System.out.println("Exists(invalidated): " + localCache.exists(networkObj.getTestString()).sync());
+        System.out.println("Exists(invalidated): " + localCache.exists(transferObject.getTestString()).sync());
     }
 
     @AfterClass

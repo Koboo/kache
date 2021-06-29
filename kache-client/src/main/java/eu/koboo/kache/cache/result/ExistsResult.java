@@ -25,7 +25,13 @@ public class ExistsResult {
 
     public CompletableFuture<Boolean> future() {
         CompletableFuture<Boolean> existsFuture = new CompletableFuture<>();
-        future.whenComplete((map, e) -> existsFuture.complete(map != null && !map.isEmpty() && map.containsKey(id) && map.get(id)));
+        future.whenComplete((map, e) -> {
+            boolean contains = map != null && !map.isEmpty() && map.containsKey(id);
+            if (contains)
+                existsFuture.complete(map.get(id));
+            else
+                existsFuture.complete(false);
+        });
         return existsFuture;
     }
 }

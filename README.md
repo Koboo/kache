@@ -17,7 +17,7 @@ whereby objects have to extend the class ``Serializable``!
 
 # Usage
   
-**All functions are shown here as examples**  
+**All methods and functions are shown here as examples**  
 
 ### Create ``KacheClient``
 ````java
@@ -36,7 +36,7 @@ public class SomeClass {
 }
 ````
 
-### Use ``SharedCache<Object>``
+### Use ``SharedCache<Object extends Transferable>``
 ````java
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -47,7 +47,11 @@ public class SomeClass {
         KacheClient client = new KacheClient();
 
         String key = "key"; // any key
-        NetworkObj object = new NetworkObj("", 1L, -1); // any object, have to extend Serializable 
+
+        TransferObject transferObject = new TransferObject(); // any object, have to extend Transferable 
+        transferObject.setTestString("SomeString");
+        transferObject.setTestInt(1);
+        transferObject.setTestLong(-1L);
 
         SharedCache<Object> cache = client.getCache("object_cache");
 
@@ -63,13 +67,13 @@ public class SomeClass {
         cache.invalidate(key);
 
         // Get from cache and sync the future
-        NetworkObj objfromCache = cache.resolve(key).sync();
+        TransferObject objfromCache = cache.resolve(key).sync();
         // Or do something with the CompletableFuture
-        CompletableFuture<NetworkObj> future = cache.resolve(key).future();
+        CompletableFuture<TransferObject> future = cache.resolve(key).future();
 
         // All methods are also available with keyword "Many"
 
-        Map<String, NetworkObj> toCache = new HashMap<>();
+        Map<String, TransferObject> toCache = new HashMap<>();
         cache.pushMany(toCache);
         
         
@@ -80,20 +84,20 @@ public class SomeClass {
         Map<String, Boolean> existsMap = cache.existsMany(keyList).sync();
         CompletableFuture<Map<String, Boolean>> futureMap = cache.existsMany(keyList).future();
         
-        Map<String, NetworkObj> resolveMap = cache.resolveMany(keyList).sync();
-        CompletableFuture<Map<String, NetworkObj>> future = cache.resolveMany(keyList).future();
+        Map<String, TransferObject> resolveMap = cache.resolveMany(keyList).sync();
+        CompletableFuture<Map<String, TransferObject>> future = cache.resolveMany(keyList).future();
         
         // Special methods:
 
         Map<String, Object> resolveAllMap = cache.resolveAll().sync();
-        CompletableFuture<Map<String, NetworkObj>> resolveAllMap = cache.resolveAll().future();
+        CompletableFuture<Map<String, TransferObject>> resolveAllMap = cache.resolveAll().future();
         cache.invalidateAll();
     }
 
 }
 ````
 
-### Use ``TransferChannel<Object>``
+### Use ``TransferChannel<Object extends Transferable>``
 ````java
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -102,10 +106,13 @@ public class SomeClass {
 
     public static void main(String[] args) {
         KacheClient client = new KacheClient();
+        
+        TransferObject transferObject = new TransferObject(); // any object, have to extend Transferable 
+        transferObject.setTestString("SomeString");
+        transferObject.setTestInt(1);
+        transferObject.setTestLong(-1L); 
 
-        NetworkObj object = new NetworkObj("", 1L, -1); // any object, have to extend Serializable 
-
-        TransferChannel<NetworkObj> channel = client.getTransfer("channelName"); // any Channel-Name
+        TransferChannel<TransferObject> channel = client.getTransfer("channelName"); // any Channel-Name
 
         // Publish an object to the clients, who registered the specific TransferChannel 
         channel.publish(object);
@@ -115,7 +122,7 @@ public class SomeClass {
         
         // Register a Consumer, which if fired by receiving an Object on the TransferChannel
         channel.receive(obj -> {
-            // Do something with the NetworkObj
+            // Do something with the TransferObject
         });
         
         // Stop receiving the Objets of the TransferChannel

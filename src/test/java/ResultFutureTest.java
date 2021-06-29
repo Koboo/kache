@@ -10,7 +10,7 @@ public class ResultFutureTest {
     static KacheServer server;
     static KacheClient client;
 
-    static SharedCache<NetworkObj> sharedCache;
+    static SharedCache<TransferObject> sharedCache;
 
     @BeforeClass
     public static void before() throws InterruptedException {
@@ -20,39 +20,41 @@ public class ResultFutureTest {
         client = new KacheClient("localhost", 6565);
         client.start();
 
-        client.getEncoder().register(1, NetworkObj::new);
+        client.getTransferCodec().register(1, TransferObject::new);
 
         sharedCache = client.getCache("test_cache");
     }
 
     @Test
     public void testA() throws InterruptedException {
-        NetworkObj networkObj = new NetworkObj();
-        networkObj.setTestString("Bla");
-        networkObj.setTestInt(1);
-        networkObj.setTestLong(-1L);
+        TransferObject transferObject = new TransferObject();
+        transferObject.setTestString("SomeString");
+        transferObject.setTestInt(1);
+        transferObject.setTestLong(-1L);
 
-        sharedCache.exists(networkObj.getTestString()).future().whenComplete((ex, e) -> System.out.println("Exists(before): " + ex));
+        sharedCache.exists(transferObject.getTestString()).future().whenComplete((ex, e) -> System.out.println("Exists(before): " + ex));
 
-        Thread.sleep(800);
+        Thread.sleep(500);
 
-        sharedCache.push(networkObj.getTestString(), networkObj);
+        sharedCache.push(transferObject.getTestString(), transferObject);
         System.out.println("Cached!");
 
-        sharedCache.exists(networkObj.getTestString()).future().whenComplete((ex, e) -> System.out.println("Exists(after): " + ex));
+        Thread.sleep(500);
 
-        Thread.sleep(800);
+        sharedCache.exists(transferObject.getTestString()).future().whenComplete((ex, e) -> System.out.println("Exists(after): " + ex));
 
-        sharedCache.resolve(networkObj.getTestString()).future().whenComplete((obj, e) -> System.out.println("Resolved"));
+        Thread.sleep(500);
 
-        Thread.sleep(800);
+        sharedCache.resolve(transferObject.getTestString()).future().whenComplete((obj, e) -> System.out.println("Resolved? " + (obj != null)));
 
-        sharedCache.invalidate(networkObj.getTestString());
+        Thread.sleep(500);
+
+        sharedCache.invalidate(transferObject.getTestString());
         System.out.println("Invalidated!");
 
-        sharedCache.exists(networkObj.getTestString()).future().whenComplete((ex, e) -> System.out.println("Exists(invalid): " + ex));
+        sharedCache.exists(transferObject.getTestString()).future().whenComplete((ex, e) -> System.out.println("Exists(invalid): " + ex));
 
-        Thread.sleep(800);
+        Thread.sleep(500);
     }
 
     @AfterClass

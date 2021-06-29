@@ -14,7 +14,7 @@ public class TransferChannelTest {
     static KacheClient client;
     static List<KacheClient> clientList;
 
-    static TransferChannel<NetworkObj> transfer;
+    static TransferChannel<TransferObject> transfer;
 
     @BeforeClass
     public static void before() throws InterruptedException {
@@ -22,18 +22,20 @@ public class TransferChannelTest {
         server.start();
         clientList = new ArrayList<>();
 
-        client.getEncoder().register(1, NetworkObj::new);
-
         for(int i = 0; i < 3; i++) {
             KacheClient receiveClient = new KacheClient("localhost", 6565);
-            receiveClient.start();
-            TransferChannel<NetworkObj> channel = receiveClient.getTransfer("test_transfer");
-            channel.receive(obj -> System.out.println(obj.getTestString() + "/" + obj.getTestInt() + "/" + obj.getTestLong()));
-            clientList.add(receiveClient);
-            Thread.sleep(50L);
+            receiveClient.getTransferCodec().register(1, TransferObject::new);
+            boolean started = receiveClient.start();
+            if(started) {
+                TransferChannel<TransferObject> channel = receiveClient.getTransfer("test_transfer");
+                channel.receive(obj -> System.out.println(obj.getTestString() + "/" + obj.getTestInt() + "/" + obj.getTestLong()));
+                clientList.add(receiveClient);
+                Thread.sleep(500);
+            }
         }
 
         client = new KacheClient("localhost", 6565);
+        client.getTransferCodec().register(1, TransferObject::new);
         client.start();
 
         transfer = client.getTransfer("test_transfer");
@@ -41,14 +43,12 @@ public class TransferChannelTest {
 
     @Test
     public void testA() throws InterruptedException {
-        NetworkObj networkObj = new NetworkObj();
-        networkObj.setTestString("Bla");
-        networkObj.setTestInt(1);
-        networkObj.setTestLong(-1L);
+        TransferObject transferObject = new TransferObject();
+        transferObject.setTestString("Bla");
+        transferObject.setTestInt(1);
+        transferObject.setTestLong(-1L);
 
-        transfer.publish(networkObj);
-
-        Thread.sleep(5_000L);
+        transfer.publish(transferObject);
     }
 
     @AfterClass
