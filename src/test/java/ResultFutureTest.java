@@ -20,12 +20,17 @@ public class ResultFutureTest {
         client = new KacheClient("localhost", 6565);
         client.start();
 
+        client.getEncoder().register(1, NetworkObj::new);
+
         sharedCache = client.getCache("test_cache");
     }
 
     @Test
     public void testA() throws InterruptedException {
-        NetworkObj networkObj = new NetworkObj("TEst", 1, -1L);
+        NetworkObj networkObj = new NetworkObj();
+        networkObj.setTestString("Bla");
+        networkObj.setTestInt(1);
+        networkObj.setTestLong(-1L);
 
         sharedCache.exists(networkObj.getTestString()).future().whenComplete((ex, e) -> System.out.println("Exists(before): " + ex));
 

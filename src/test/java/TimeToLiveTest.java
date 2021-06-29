@@ -18,13 +18,18 @@ public class TimeToLiveTest {
         client = new KacheClient("localhost", 6565);
         client.start();
 
+        client.getEncoder().register(1, NetworkObj::new);
+
         localCache = client.getCache("test_cache");
         localCache.timeToLive(TimeUnit.SECONDS.toMillis(10));
     }
 
     @Test
     public void testA() throws InterruptedException {
-        NetworkObj networkObj = new NetworkObj("TEst", 1, -1L);
+        NetworkObj networkObj = new NetworkObj();
+        networkObj.setTestString("Bla");
+        networkObj.setTestInt(1);
+        networkObj.setTestLong(-1L);
 
         System.out.println("Exists(before): " + localCache.exists(networkObj.getTestString()).sync());
 

@@ -1,16 +1,65 @@
 package eu.koboo.kache.channel;
 
-import java.io.Serializable;
+import eu.koboo.endpoint.networkable.Networkable;
+import eu.koboo.kache.KacheClient;
+import eu.koboo.kache.packets.transfer.client.ClientRegisterTransferPacket;
+import eu.koboo.kache.packets.transfer.client.ClientTransferObjectPacket;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
-public interface TransferChannel<V extends Serializable> {
+public class TransferChannel<V extends Networkable> {
 
-    String getChannel();
+    private final KacheClient client;
+    private final String channel;
+    private final List<Consumer<V>> consumerList;
+    private boolean fireReceive;
 
-    TransferChannel<V> publish(V value);
+    public TransferChannel(KacheClient client, String channel) {
+        this.client = client;
+        this.channel = channel;
+        this.consumerList = new ArrayList<>();
+        this.fireReceive = true;
+        ClientRegisterTransferPacket packet = new ClientRegisterTransferPacket();
+        packet.setChannel(channel);
+        client.send(packet).syncUninterruptibly();
+    }
 
-    TransferChannel<V> receive(Consumer<V> valueConsumer);
+    public String getChannelName() {
+        return channel;
+    }
 
-    TransferChannel<V> pause(boolean pause);
+    public TransferChannel<V> publish(V value) {
+        byte[] valueBytes = client.getEncoder().encode(value);
+        ClientTransferObjectPacket packet = new ClientTransferObjectPacket();
+        packet.setChannel(channel);
+        packet.setValue(valueBytes);
+        client.send(packet);
+        return this;
+    }
 
+    public TransferChannel<V> receive(Consumer<V> valueConsumer) {
+        consumerList.add(valueConsumer);
+        return this;
+    }
+
+    public TransferChannel<V> clearReceivers() {
+        consumerList.clear();
+        return this;
+    }
+
+    public TransferChannel<V> pause(boolean pause) {
+        this.fireReceive = pause;
+        return this;
+    }
+
+    public void onReceive(byte[] object) {
+        if(consumerList != null && !consumerList.isEmpty() && fireReceive) {
+            V value = client.getEncoder().decode(object);
+            for(Consumer<V> consumer : consumerList) {
+                consumer.accept(value);
+            }
+        }
+    }
 }

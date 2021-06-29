@@ -1,16 +1,13 @@
-import java.io.Serializable;
+import eu.koboo.endpoint.networkable.Networkable;
 
-public class NetworkObj implements Serializable {
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+
+public class NetworkObj implements Networkable {
 
     private String testString;
     private int testInt;
     private long testLong;
-
-    public NetworkObj(String testString, int testInt, long testLong) {
-        this.testString = testString;
-        this.testInt = testInt;
-        this.testLong = testLong;
-    }
 
     public String getTestString() {
         return testString;
@@ -36,4 +33,17 @@ public class NetworkObj implements Serializable {
         this.testLong = testLong;
     }
 
+    @Override
+    public void readStream(DataInputStream dataInputStream) throws Exception {
+        setTestString(dataInputStream.readUTF());
+        setTestInt(dataInputStream.readInt());
+        setTestLong(dataInputStream.readLong());
+    }
+
+    @Override
+    public void writeStream(DataOutputStream dataOutputStream) throws Exception {
+        dataOutputStream.writeUTF(getTestString());
+        dataOutputStream.writeInt(getTestInt());
+        dataOutputStream.writeLong(getTestLong());
+    }
 }

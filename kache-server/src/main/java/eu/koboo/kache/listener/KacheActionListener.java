@@ -18,8 +18,8 @@ public class KacheActionListener implements Consumer<ChannelActionEvent> {
     @Override
     public void accept(ChannelActionEvent event) {
         Channel channel = event.getChannel();
-        if(event.getAction() == ChannelAction.DISCONNECT && serverApp.getServer().hasAnyTransfer(channel)) {
-            serverApp.getServer().clearTransfer(channel);
+        if(event.getAction() == ChannelAction.DISCONNECT && serverApp.getServer().getTransferManager().hasAnyTransfer(channel)) {
+            serverApp.getServer().getTransferManager().clearTransfer(channel);
             serverApp.getConsole().info("Transfer{channel=" + event.getChannel().id().toString() + ", action=Reset}");
         }
         serverApp.getConsole().info("Action{channel=" + event.getChannel().id().toString() + ", action=" + event.getAction().name() + "}");

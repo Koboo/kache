@@ -17,15 +17,15 @@ public class KacheServerApp {
     final KacheServer kacheServer;
 
     public KacheServerApp() {
-        this.console = ConsoleBuilder.builder()
+        console = ConsoleBuilder.builder()
                 .setConsolePrompt(" &6> ")
                 .setConsoleName("kache-server")
                 .build();
-        this.kacheServer = new KacheServer();
-        this.kacheServer.registerEvent(ChannelActionEvent.class, new KacheActionListener(this));
-        this.kacheServer.registerEvent(KacheRequestEvent.class, new KacheRequestListener(this));
-        this.kacheServer.registerEvent(ErrorEvent.class, new KacheErrorListener(this));
-        this.kacheServer.registerEvent(LogEvent.class, new KacheLogListener(this));
+        kacheServer = new KacheServer();
+        kacheServer.registerEvent(ChannelActionEvent.class, new KacheActionListener(this));
+        kacheServer.registerEvent(KacheRequestEvent.class, new KacheRequestListener(this));
+        kacheServer.registerEvent(ErrorEvent.class, new KacheErrorListener(this));
+        kacheServer.registerEvent(LogEvent.class, new KacheLogListener(this));
     }
 
     void start() {

@@ -88,36 +88,38 @@ public class CacheManager {
     public void invalidateAll(ClientInvalidateAllPacket packet) {
         String name = packet.getCacheName().toLowerCase(Locale.ROOT);
         ClientInvalidateManyPacket invalidatePacket = new ClientInvalidateManyPacket();
-        invalidatePacket.setListToInvalidate(getAllKeys(name);
+        invalidatePacket.setListToInvalidate(getAllKeys(name));
         invalidatePacket.setCacheName(name);
         invalidate(invalidatePacket);
     }
 
-    public Map<String, byte[]> resolve(ClientResolveManyPacket packet) {
-
-
+    public void resolve(Channel channel, ClientResolveManyPacket packet) {
         ServerResolveManyPacket response = new ServerResolveManyPacket();
         response.setFutureId(packet.getFutureId());
         response.setCacheName(packet.getCacheName());
 
         Map<String, byte[]> resolveMap = new HashMap<>();
-        if (!packet.getListToResolve().isEmpty())
-            resolveMap = server.resolve(p.getCacheName(), p.getListToResolve());
-        response.setMapToResolve(resolveMap);
-
-        event.getChannel().writeAndFlush(response);
-
-
-        name = name.toLowerCase(Locale.ROOT);
-        CacheMap<String, byte[]> cacheMap = serverCache.get(name);
-        Map<String, byte[]> resolveMap = new HashMap<>();
-        if (cacheMap != null) {
-            for (String key : listToResolve) {
-                if (cacheMap.containsKey(key))
-                    resolveMap.put(key, cacheMap.get(key));
+        if (!packet.getListToResolve().isEmpty()) {
+            String name = packet.getCacheName().toLowerCase(Locale.ROOT);
+            CacheMap<String, byte[]> cacheMap = serverCache.get(name);
+            if (cacheMap != null) {
+                for (String key : packet.getListToResolve()) {
+                    if (cacheMap.containsKey(key))
+                        resolveMap.put(key, cacheMap.get(key));
+                }
             }
         }
-        return resolveMap;
+        response.setMapToResolve(resolveMap);
+        channel.writeAndFlush(response);
+    }
+
+    public void resolveAll(Channel channel, ClientResolveAllPacket packet) {
+        String name = packet.getCacheName().toLowerCase(Locale.ROOT);
+        ClientResolveManyPacket manyPacket = new ClientResolveManyPacket();
+        manyPacket.setFutureId(packet.getFutureId());
+        manyPacket.setCacheName(name);
+        manyPacket.setListToResolve(getAllKeys(name));
+        resolve(channel, manyPacket);
     }
 
     public void force(ClientForceManyPacket packet) {

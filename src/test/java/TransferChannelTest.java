@@ -22,6 +22,8 @@ public class TransferChannelTest {
         server.start();
         clientList = new ArrayList<>();
 
+        client.getEncoder().register(1, NetworkObj::new);
+
         for(int i = 0; i < 3; i++) {
             KacheClient receiveClient = new KacheClient("localhost", 6565);
             receiveClient.start();
@@ -39,7 +41,11 @@ public class TransferChannelTest {
 
     @Test
     public void testA() throws InterruptedException {
-        NetworkObj networkObj = new NetworkObj("TEst", 1, -1L);
+        NetworkObj networkObj = new NetworkObj();
+        networkObj.setTestString("Bla");
+        networkObj.setTestInt(1);
+        networkObj.setTestLong(-1L);
+
         transfer.publish(networkObj);
 
         Thread.sleep(5_000L);

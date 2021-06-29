@@ -2,13 +2,14 @@ package eu.koboo.kache.listener;
 
 import eu.koboo.endpoint.core.events.ReceiveEvent;
 import eu.koboo.endpoint.core.util.SharedFutures;
+import eu.koboo.endpoint.networkable.Networkable;
 import eu.koboo.kache.KacheClient;
-import eu.koboo.kache.cache.SharedCacheImpl;
-import eu.koboo.kache.channel.TransferChannelImpl;
+import eu.koboo.kache.channel.TransferChannel;
 import eu.koboo.kache.packets.cache.server.ServerExistsManyPacket;
 import eu.koboo.kache.packets.cache.server.ServerResolveManyPacket;
 import eu.koboo.kache.packets.transfer.server.ServerTransferObjectPacket;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -29,8 +30,15 @@ public class KacheClientListener implements Consumer<ReceiveEvent> {
         cswitch(event.getTypeObject(),
                 ccase(ServerResolveManyPacket.class, p -> {
                     String futureId = p.getFutureId();
-                    SharedCacheImpl<?> localCache = (SharedCacheImpl<?>) client.getCache(p.getCacheName());
-                    localCache.completeResolveFuture(futureId, p.getMapToResolve());
+                    CompletableFuture<Map<String, ?>> future = SharedFutures.getFuture(futureId);
+                    Map<String, Networkable> serializedMap = new HashMap<>();
+                    if (p.getMapToResolve() != null && !p.getMapToResolve().isEmpty()) {
+                        for (Map.Entry<String, byte[]> entry : p.getMapToResolve().entrySet()) {
+                            Networkable value = client.getEncoder().decode(entry.getValue());
+                            serializedMap.put(entry.getKey(), value);
+                        }
+                    }
+                    future.complete(serializedMap);
                 }),
                 ccase(ServerExistsManyPacket.class, p -> {
                     String futureId = p.getFutureId();
@@ -39,7 +47,7 @@ public class KacheClientListener implements Consumer<ReceiveEvent> {
                         future.complete(p.getMapToContains());
                 }),
                 ccase(ServerTransferObjectPacket.class, p -> {
-                    TransferChannelImpl<?> transferChannel = (TransferChannelImpl<?>) client.getTransfer(p.getChannel());
+                    TransferChannel<?> transferChannel = client.getTransfer(p.getChannel());
                     transferChannel.onReceive(p.getValue());
                 }));
     }
