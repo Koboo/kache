@@ -103,7 +103,7 @@ public class SomeClass {
     public static void main(String[] args) {
         KacheClient client = new KacheClient();
 
-        TestObj object = new TestObj("", 1L, -1); // any object, have to extend Serializable 
+        TestObj object = new TestObj("", 1L, -1); // any object, has to extend Serializable 
 
         TransferChannel<TestObj> channel = client.getTransfer("channelName"); // any Channel-Name
 
