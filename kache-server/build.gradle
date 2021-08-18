@@ -3,10 +3,10 @@ plugins {
 }
 
 dependencies {
-    compile 'eu.koboo:file-config:1.3.9'
-    compile 'eu.koboo:terminal-console:1.1.4'
-    compile "eu.koboo:endpoint-server:${endpointVersion}"
+    compile 'com.github.Koboo:file-config:-SNAPSHOT'
+    compile 'com.github.Koboo:terminal-console:-SNAPSHOT'
     compile project(':kache-core')
+    compile "com.github.Koboo.endpoint-netty:endpoint-server:${endpointVersion}"
 }
 
 mainClassName = 'eu.koboo.kache.KacheServerApp'

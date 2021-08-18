@@ -29,7 +29,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            url 'https://repo.koboo.eu/releases'
+            url 'https://jitpack.io/'
         }
     }
 }
