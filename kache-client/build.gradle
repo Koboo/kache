@@ -2,5 +2,5 @@ dependencies {
     compile project(':kache-core')
     compile "com.github.Koboo.endpoint-netty:endpoint-client:${endpointVersion}"
     compile 'com.github.Koboo.serialization:serial-core:-SNAPSHOT'
-    compile 'com.github.Koboo.serialization:serial-kryo:-SNAPSHOT'
+    compile 'com.github.Koboo.serialization:serial-fst:-SNAPSHOT'
 }
