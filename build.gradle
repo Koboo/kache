@@ -40,6 +40,8 @@ dependencies {
     testCompile project('kache-client')
 }
 
+
 test {
     exclude '*'
 }
+
