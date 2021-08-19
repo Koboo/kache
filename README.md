@@ -36,7 +36,7 @@ public class SomeClass {
 }
 ````
 
-### Use ``SharedCache<Object extends Transferable>``
+### Use ``SharedCache<Object extends Serializable>``
 ````java
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -97,7 +97,7 @@ public class SomeClass {
 }
 ````
 
-### Use ``TransferChannel<Object extends Transferable>``
+### Use ``TransferChannel<Object extends Serializable>``
 ````java
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
