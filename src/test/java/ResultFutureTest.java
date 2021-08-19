@@ -20,8 +20,6 @@ public class ResultFutureTest {
         client = new KacheClient("localhost", 6565);
         client.start();
 
-        client.getTransferCodec().register(1, TransferObject::new);
-
         sharedCache = client.getCache("test_cache");
     }
 

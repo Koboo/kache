@@ -1,9 +1,6 @@
-import eu.koboo.endpoint.transferable.Transferable;
+import java.io.Serializable;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
-public class TransferObject implements Transferable {
+public class TransferObject implements Serializable {
 
     private String testString;
     private int testInt;
@@ -33,17 +30,4 @@ public class TransferObject implements Transferable {
         this.testLong = testLong;
     }
 
-    @Override
-    public void readStream(DataInputStream dataInputStream) throws Exception {
-        setTestString(dataInputStream.readUTF());
-        setTestInt(dataInputStream.readInt());
-        setTestLong(dataInputStream.readLong());
-    }
-
-    @Override
-    public void writeStream(DataOutputStream dataOutputStream) throws Exception {
-        dataOutputStream.writeUTF(getTestString());
-        dataOutputStream.writeInt(getTestInt());
-        dataOutputStream.writeLong(getTestLong());
-    }
 }

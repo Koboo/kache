@@ -15,8 +15,6 @@ public class ReconnectTest {
         client = new KacheClient("localhost", 6565);
         client.start();
 
-        client.getTransferCodec().register(1, TransferObject::new);
-
         localCache = client.getCache("test_cache");
     }
 
