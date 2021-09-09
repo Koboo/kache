@@ -12,11 +12,11 @@ import eu.koboo.kache.packets.transfer.server.ServerTransferObjectPacket;
 
 public class Kache {
 
-    public static final EndpointBuilder ENDPOINT_BUILDER = EndpointBuilder.newBuilder()
+    public static final EndpointBuilder ENDPOINT_BUILDER = EndpointBuilder.builder()
             .logging(false)
             .compression(Compression.SNAPPY)
             .errorMode(ErrorMode.STACK_TRACE)
-            .useUDS("/tmp/kache.sock")
+            .useUDS(true)
             .registerPacket(1, ClientTimeToLivePacket.class)
             .registerPacket(2, ClientExistsManyPacket.class)
             .registerPacket(3, ClientForceManyPacket.class)
