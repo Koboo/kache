@@ -1,4 +1,3 @@
 dependencies {
     compile "eu.koboo:endpoint-core:${endpointVersion}"
-    compile "eu.koboo:endpoint-transferable:${endpointVersion}"
 }

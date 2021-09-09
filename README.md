@@ -11,10 +11,6 @@ Note: The transport encoding is based on the ``Protocol.NATIVE`` of [Endpoint-Ne
 but the object serialization is based on the framework [fast-serialization](https://github.com/RuedigerMoeller/fast-serialization), 
 whereby objects have to extend the class ``Serializable``!
 
-# Important
-
-**It's recommend to use this framework only on localhost-running apps to share maps across JVM using `UnixDomainSocket`.**
-
 # Usage
   
 **All methods and functions are shown here as examples**  
