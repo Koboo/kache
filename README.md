@@ -11,9 +11,13 @@ Note: The transport encoding is based on the ``Protocol.NATIVE`` of [Endpoint-Ne
 but the object serialization is based on the framework [fast-serialization](https://github.com/RuedigerMoeller/fast-serialization), 
 whereby objects have to extend the class ``Serializable``!
 
+# Important
+
+**It's recommend to use this framework only on localhost-running apps to share maps across JVM using `UnixDomainSocket`.**
+
 # Usage
   
-**All methods and functions are shown here as examples**  
+**All functions are shown here as examples**  
 
 ### Create ``KacheClient``
 ````java
@@ -32,7 +36,7 @@ public class SomeClass {
 }
 ````
 
-### Use ``SharedCache<Object extends Transferable>``
+### Use ``SharedCache<Object>``
 ````java
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -43,11 +47,7 @@ public class SomeClass {
         KacheClient client = new KacheClient();
 
         String key = "key"; // any key
-
-        TransferObject transferObject = new TransferObject(); // any object, have to extend Transferable 
-        transferObject.setTestString("SomeString");
-        transferObject.setTestInt(1);
-        transferObject.setTestLong(-1L);
+        TestObj object = new TestObj("", 1L, -1); // any object, have to extend Serializable 
 
         SharedCache<Object> cache = client.getCache("object_cache");
 
@@ -63,13 +63,13 @@ public class SomeClass {
         cache.invalidate(key);
 
         // Get from cache and sync the future
-        TransferObject objfromCache = cache.resolve(key).sync();
+        TestObj objfromCache = cache.resolve(key).sync();
         // Or do something with the CompletableFuture
-        CompletableFuture<TransferObject> future = cache.resolve(key).future();
+        CompletableFuture<TestObj> future = cache.resolve(key).future();
 
         // All methods are also available with keyword "Many"
 
-        Map<String, TransferObject> toCache = new HashMap<>();
+        Map<String, TestObj> toCache = new HashMap<>();
         cache.pushMany(toCache);
         
         
@@ -80,20 +80,20 @@ public class SomeClass {
         Map<String, Boolean> existsMap = cache.existsMany(keyList).sync();
         CompletableFuture<Map<String, Boolean>> futureMap = cache.existsMany(keyList).future();
         
-        Map<String, TransferObject> resolveMap = cache.resolveMany(keyList).sync();
-        CompletableFuture<Map<String, TransferObject>> future = cache.resolveMany(keyList).future();
+        Map<String, TestObj> resolveMap = cache.resolveMany(keyList).sync();
+        CompletableFuture<Map<String, TestObj>> future = cache.resolveMany(keyList).future();
         
         // Special methods:
 
         Map<String, Object> resolveAllMap = cache.resolveAll().sync();
-        CompletableFuture<Map<String, TransferObject>> resolveAllMap = cache.resolveAll().future();
+        CompletableFuture<Map<String, TestObj>> resolveAllMap = cache.resolveAll().future();
         cache.invalidateAll();
     }
 
 }
 ````
 
-### Use ``TransferChannel<Object extends Transferable>``
+### Use ``TransferChannel<Object>``
 ````java
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -102,13 +102,10 @@ public class SomeClass {
 
     public static void main(String[] args) {
         KacheClient client = new KacheClient();
-        
-        TransferObject transferObject = new TransferObject(); // any object, have to extend Transferable 
-        transferObject.setTestString("SomeString");
-        transferObject.setTestInt(1);
-        transferObject.setTestLong(-1L); 
 
-        TransferChannel<TransferObject> channel = client.getTransfer("channelName"); // any Channel-Name
+        TestObj object = new TestObj("", 1L, -1); // any object, has to extend Serializable 
+
+        TransferChannel<TestObj> channel = client.getTransfer("channelName"); // any Channel-Name
 
         // Publish an object to the clients, who registered the specific TransferChannel 
         channel.publish(object);
@@ -118,7 +115,7 @@ public class SomeClass {
         
         // Register a Consumer, which if fired by receiving an Object on the TransferChannel
         channel.receive(obj -> {
-            // Do something with the TransferObject
+            // Do something with the TestObj
         });
         
         // Stop receiving the Objets of the TransferChannel
