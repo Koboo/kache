@@ -14,7 +14,7 @@ public class KacheServer extends EndpointServer {
     private final TransferManager transferManager;
 
     public KacheServer() {
-        this(!Epoll.isAvailable() ? 6565 : -1);
+        this(6565);
     }
 
     public KacheServer(int port) {
