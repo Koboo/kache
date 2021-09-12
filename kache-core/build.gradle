@@ -1,4 +1,5 @@
 dependencies {
-    compile "com.github.Koboo.endpoint-netty:endpoint-core:${endpointVersion}"
-    compile "com.github.Koboo.endpoint-netty:endpoint-transferable:${endpointVersion}"
+    compile 'eu.koboo.serial:serial-core:1.0'
+    compile "eu.koboo:endpoint-core:${endpointVersion}"
+    compile 'eu.koboo.serial:serial-fst:1.0'
 }

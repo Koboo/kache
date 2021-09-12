@@ -1,6 +1,4 @@
 dependencies {
+    compile "eu.koboo:endpoint-client:${endpointVersion}"
     compile project(':kache-core')
-    compile "com.github.Koboo.endpoint-netty:endpoint-client:${endpointVersion}"
-    compile 'com.github.Koboo.serialization:serial-core:-SNAPSHOT'
-    compile 'com.github.Koboo.serialization:serial-fst:-SNAPSHOT'
 }

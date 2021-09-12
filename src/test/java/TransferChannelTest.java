@@ -24,7 +24,6 @@ public class TransferChannelTest {
 
         for(int i = 0; i < 3; i++) {
             KacheClient receiveClient = new KacheClient("localhost", 6565);
-            receiveClient.getTransferCodec().register(1, TransferObject::new);
             boolean started = receiveClient.start();
             if(started) {
                 TransferChannel<TransferObject> channel = receiveClient.getTransfer("test_transfer");
@@ -35,7 +34,6 @@ public class TransferChannelTest {
         }
 
         client = new KacheClient("localhost", 6565);
-        client.getTransferCodec().register(1, TransferObject::new);
         client.start();
 
         transfer = client.getTransfer("test_transfer");

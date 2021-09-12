@@ -29,8 +29,6 @@ public class ResultSyncTest {
         client.registerEvent(LogEvent.class, consumer);
         client.start();
 
-        client.getTransferCodec().register(1, TransferObject::new);
-
         localCache = client.getCache("test_cache");
     }
 

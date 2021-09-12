@@ -39,3 +39,7 @@ dependencies {
     testCompile project('kache-server')
     testCompile project('kache-client')
 }
+
+test {
+    exclude '*'
+}
