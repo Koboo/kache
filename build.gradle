@@ -31,6 +31,9 @@ allprojects {
         maven {
             url 'https://jitpack.io/'
         }
+        maven {
+            url 'https://repo.koboo.eu/releases'
+        }
     }
 }
 
