@@ -20,7 +20,7 @@ public class KacheClient extends EndpointClient {
     private final SerializerPool serializerPool;
 
     public KacheClient() {
-        this(null, -1);
+        this("localhost", 6565);
     }
 
     public KacheClient(String host, int port) {
