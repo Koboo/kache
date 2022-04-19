@@ -1,15 +1,15 @@
-# **Koboo's Cache** *(Kache)*
+# **//Kache**
 
-Kache stands for Koboo's Cache and is a minimalist and lightweight framework for remote or local transport operations. 
-Kache is based on [Endpoint-Netty](https://github.com/Koboo/endpoint-netty), or rather a regular and conventional TCP client-server communication. 
-<br>
+Kache stands for Koboo's Cache and is a minimalist and lightweight framework for remote or local transport operations across the JVM. 
+Kache is based on [Endpoint-Netty](https://github.com/Koboo/endpoint-netty), or rather a regular TCP client-server communication. 
+
 **Features:**
 * [Server-side cache](#use-sharedcacheobject)
 * [Transfer Channels (Client-To-Server-To-Client)](#use-transferchannelobject)
 
-Note: The transport encoding is based on the ``Protocol.NATIVE`` of [Endpoint-Netty](https://github.com/Koboo/endpoint-netty), 
-but the object serialization is based on the framework [fast-serialization](https://github.com/RuedigerMoeller/fast-serialization), 
-whereby objects have to extend the class ``Serializable``!
+Note: The encoding is based on ``Protocol.NATIVE`` from [Endpoint-Netty](https://github.com/Koboo/endpoint-netty), 
+but the internal object serialization is based on [fast-serialization](https://github.com/RuedigerMoeller/fast-serialization), 
+whereby objects have to extend the interface ``Serializable``!
 
 # Important
 
