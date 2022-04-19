@@ -15,6 +15,10 @@ whereby objects have to extend the class ``Serializable``!
 
 **It's recommend to use this framework only on localhost-running apps to share maps across JVM using `UnixDomainSocket`.**
 
+For communication via `UDS` kache uses the default file of endpoint-netty under the path `tmp/endpoint-netty.uds`
+
+Please note, that `UDS` is primarily designed to work on *nix machines, but you can use it on Windows with `Windows Subsystem Linux`. We can't recommend that!
+
 # Usage
   
 **All functions are shown here as examples**  
